@@ -30,7 +30,7 @@ public class CustomAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
         var user = context.HttpContext.User;
 
         if (user.Identity == null)
-            throw DynamicExceptions.UnauthorizedException(message: "User identity is null.");
+            throw DynamicExceptions.UnauthorizedException("User identity is null.");
         
         if (!user.Identity.IsAuthenticated) context.Result = new UnauthorizedResult();
         

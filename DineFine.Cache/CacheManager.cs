@@ -31,7 +31,7 @@ public class CacheManager : ICacheManager
 
     public void Set<T>(string key, T value) where T : class?
     {
-        if (value is null) throw DynamicExceptions.OperationalException(message: "Cache value cannot be null");
+        if (value is null) throw DynamicExceptions.OperationalException("Cache value cannot be null");
         
         var cacheEntryOptions = new MemoryCacheEntryOptions()
             .SetSlidingExpiration(TimeSpan.FromSeconds(_cacheExpireTimeInSeconds));
