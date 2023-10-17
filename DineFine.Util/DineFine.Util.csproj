@@ -10,4 +10,8 @@
       <ProjectReference Include="..\DineFine.Cache\DineFine.Cache.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12" />
+    </ItemGroup>
+
 </Project>
