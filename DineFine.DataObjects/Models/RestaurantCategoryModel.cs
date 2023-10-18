@@ -15,8 +15,8 @@ public class RestaurantCategoryUpdateModel : BaseUpdateModel
 public class RestaurantCategoryViewModel: BaseViewModel
 {
     public int RestaurantId { get; set; }
-    public int CategoryId { get; set; }
     public virtual CategoryViewModel? Category { get; set; }
+    public virtual IEnumerable<MenuItemViewModel>? MenuItems { get; set; }
 }
 
 public class RestaurantCategoryQueryFilterModel : BaseQueryFilterModel

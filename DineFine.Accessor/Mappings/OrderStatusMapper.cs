@@ -3,18 +3,18 @@ using DineFine.DataObjects.Models;
 
 namespace DineFine.Accessor.Mappings;
 
-public static class UnitMapper
+public static class OrderStatusMapper
 {
-    public static UnitViewModel ToViewModel(this Unit entity)
+    public static OrderStatusViewModel ToViewModel(this OrderStatus entity)
     {
-        return new UnitViewModel
+        return new OrderStatusViewModel
         {
             Id = entity.Id,
             Name = entity.Name
         };
     }
     
-    public static IEnumerable<UnitViewModel> ToUnitViewModelList(this IEnumerable<Unit> entities)
+    public static IEnumerable<OrderStatusViewModel> ToOrderStatusViewModelList(this IEnumerable<OrderStatus> entities)
     {
         return entities.Select(x => x.ToViewModel());
     }

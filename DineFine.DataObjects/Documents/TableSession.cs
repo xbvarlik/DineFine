@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DineFine.DataObjects.Entities;
 using DineFine.DataObjects.Models;
 
 namespace DineFine.DataObjects.Documents;
@@ -9,8 +10,10 @@ public class TableSession
     public string TableSessionId { get; set; } = null!;
     [Required]
     public int RestaurantId { get; set; }
+    public RestaurantViewModel Restaurant { get; set; } = null!;
+    public TableOfRestaurantViewModel TableOfRestaurant { get; set; } = null!;
     [Required]
-    public ICollection<Order> Orders { get; set; } = null!;
+    public IEnumerable<OrderViewModel> Orders { get; set; } = null!;
     [Required]
     public DateTime StartedAt { get; set; }
     [Required]

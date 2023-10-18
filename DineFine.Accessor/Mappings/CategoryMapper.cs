@@ -22,6 +22,7 @@ public static class CategoryMapper
     {
         return new CategoryViewModel
         {
+            Id = entity.Id,
             Name = entity.Name
         };
     }

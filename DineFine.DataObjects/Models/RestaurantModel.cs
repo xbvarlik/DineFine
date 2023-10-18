@@ -15,8 +15,8 @@ public class RestaurantUpdateModel : BaseUpdateModel
 public class RestaurantViewModel : BaseViewModel
 {
     public string Name { get; set; } = null!;
-    public virtual IList<MenuItemViewModel>? MenuItems { get; set; }
-    public virtual IList<RestaurantCategoryViewModel>? Categories { get; set; }
-    public virtual IList<RestaurantStockInfoViewModel>? StockInfo { get; set; }
+    public virtual IEnumerable<MenuItemViewModel>? MenuItems { get; set; }
+    public virtual IEnumerable<RestaurantCategoryViewModel>? Categories { get; set; }
+    public virtual IEnumerable<RestaurantStockInfoViewModel>? StockInfo { get; set; }
     
 }

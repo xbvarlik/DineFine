@@ -2,25 +2,25 @@
 
 public class OrderCreateModel : BaseCreateModel
 {
-    public int CustomerId { get; set; }
     public int RestaurantId { get; set; }
-    public int TableOfRestaurantId { get; set; }
-    public int OrderStatusId { get; set; }
-    public int MenuItemId { get; set; }
+    public CustomerReviewCreateModel? CustomerReview { get; set; }
+    public RestaurantCreateModel Restaurant { get; set; } = null!;
+    public TableOfRestaurantCreateModel TableOfRestaurant { get; set; } = null!;
+    public OrderStatusViewModel OrderStatus { get; set; } = null!;
+    public MenuItemCreateModel MenuItem { get; set; } = null!;
 }
 
 public class OrderUpdateModel : BaseUpdateModel
 {
-    public int? CustomerId { get; set; }
-    public int? RestaurantId { get; set; }
-    public int? TableOfRestaurantId { get; set; }
-    public int? OrderStatusId { get; set; }
-    public int? MenuItemId { get; set; }
+    public CustomerReviewUpdateModel? CustomerReview { get; set; }
+    public TableOfRestaurantCreateModel? TableOfRestaurant { get; set; }
+    public OrderStatusViewModel? OrderStatus { get; set; }
+    public MenuItemCreateModel? MenuItem { get; set; }
 }
 
 public class OrderViewModel : BaseViewModel
 {
-    public virtual CustomerReviewViewModel? Customer { get; set; }
+    public virtual CustomerReviewViewModel? CustomerReview { get; set; }
     public int RestaurantId { get; set; }
     public virtual RestaurantViewModel? Restaurant { get; set; }
     public int TableOfRestaurantId { get; set; }

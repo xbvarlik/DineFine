@@ -29,12 +29,14 @@ public static class RestaurantStockInfoMapper
         if (!includeNavigationProperties)
             return new RestaurantStockInfoViewModel
             {
+                Id = entity.Id,
                 Stock = entity.Stock,
                 RestaurantId = entity.RestaurantId,
             };
         
         return new RestaurantStockInfoViewModel
         {
+            Id = entity.Id,
             Stock = entity.Stock,
             RestaurantId = entity.RestaurantId,
             Unit = entity.Unit?.ToViewModel(),
@@ -42,8 +44,9 @@ public static class RestaurantStockInfoMapper
         };
     }
     
-    public static IEnumerable<RestaurantStockInfoViewModel> ToRestaurantStockInfoViewModelList(this IEnumerable<RestaurantStockInfo> entities)
+    public static IEnumerable<RestaurantStockInfoViewModel> ToRestaurantStockInfoViewModelList(this IEnumerable<RestaurantStockInfo> entities, 
+        bool includeNavigationProperties = true)
     {
-        return entities.Select(x => x.ToViewModel());
+        return entities.Select(x => x.ToViewModel(includeNavigationProperties));
     }
 }

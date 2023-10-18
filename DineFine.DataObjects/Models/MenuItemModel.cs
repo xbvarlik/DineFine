@@ -21,8 +21,8 @@ public class MenuItemViewModel : BaseViewModel
     public string Name { get; set; } = null!;
     public double Price { get; set; }
     public int RestaurantId { get; set; }
-    public int CategoryId { get; set; }
-    public virtual IList<MenuItemIngredientViewModel>? Ingredients { get; set; }
+    public virtual RestaurantCategoryViewModel? Category { get; set; }
+    public virtual IEnumerable<MenuItemIngredientViewModel>? Ingredients { get; set; }
 }
 
 public class MenuItemQueryFilterModel : BaseQueryFilterModel

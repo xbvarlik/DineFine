@@ -22,6 +22,7 @@ public static class IngredientMapper
     {
         return new IngredientViewModel
         {
+            Id = entity.Id,
             Name = entity.Name
         };
     }
