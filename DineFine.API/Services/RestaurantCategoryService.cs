@@ -1,11 +1,10 @@
 ﻿using DineFine.Accessor.DataAccessors.Mssql;
 using DineFine.Accessor.Mappings;
-using DineFine.API.Services;
 using DineFine.DataObjects.Entities;
 using DineFine.DataObjects.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DineFine.API;
+namespace DineFine.API.Services;
 
 public class RestaurantCategoryService : BaseService<int, RestaurantCategory, RestaurantCategoryViewModel, 
     RestaurantCategoryCreateModel, RestaurantCategoryUpdateModel, RestaurantCategoryQueryFilterModel, MssqlContext>

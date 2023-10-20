@@ -22,7 +22,6 @@
 
     <ItemGroup>
       <Folder Include="DataAccessors\Cosmos\Migrations\" />
-      <Folder Include="DataAccessors\Mssql\Migrations\" />
     </ItemGroup>
 
 </Project>

@@ -7,8 +7,8 @@ using DineFine.DataObjects.Models;
 namespace DineFine.API.Controllers;
 
 [SpecificAccess("RestaurantOwner, KitchenPersonnel, Waiter")]
-public class OrderController : BaseController<string, Order, OrderViewModel, OrderCreateModel, OrderUpdateModel, 
-    BaseQueryFilterModel, CosmosContext>
+public class OrderController : BaseCosmosController<Order, OrderViewModel, OrderCreateModel, OrderUpdateModel, 
+    BaseQueryFilterModel>
 {
     protected OrderController(OrderService service) : base(service)
     {

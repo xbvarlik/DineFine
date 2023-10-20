@@ -6,12 +6,12 @@ using DineFine.DataObjects.Models;
 
 namespace DineFine.API.Services;
 
-public class OrderService : BaseService<string, Order, OrderViewModel, OrderCreateModel, OrderUpdateModel, 
-    BaseQueryFilterModel, CosmosContext>
+public class OrderService : BaseCosmosService<Order, OrderViewModel, OrderCreateModel, OrderUpdateModel, 
+    BaseQueryFilterModel>
 {
     private readonly INotificationService _notificationService;
     
-    public OrderService(CosmosContext context, INotificationService notificationService) : base(context)
+    public OrderService(CosmosContext context, INotificationService notificationService) : base(CosmosPartitionKeys.RestaurantId, context)
     {
         _notificationService = notificationService;
     }
@@ -51,4 +51,6 @@ public class OrderService : BaseService<string, Order, OrderViewModel, OrderCrea
     {
         return Task.FromResult(entity.ToViewModel());
     }
+
+
 }

@@ -1,14 +1,15 @@
 ﻿using DineFine.Accessor.DataAccessors.Cosmos;
 using DineFine.Accessor.Mappings;
+using DineFine.API.Constants;
 using DineFine.DataObjects.Documents;
 using DineFine.DataObjects.Models;
 
 namespace DineFine.API.Services;
 
-public class TableSessionService : BaseService<string, TableSession, TableSessionViewModel, TableSessionCreateModel, 
-    TableSessionUpdateModel, BaseQueryFilterModel, CosmosContext>
+public class TableSessionService : BaseCosmosService<TableSession, TableSessionViewModel, TableSessionCreateModel, 
+    TableSessionUpdateModel, BaseQueryFilterModel>
 {
-    public TableSessionService(CosmosContext context) : base(context)
+    public TableSessionService(CosmosContext context) : base(CosmosPartitionKeys.RestaurantId, context)
     {
     }
 

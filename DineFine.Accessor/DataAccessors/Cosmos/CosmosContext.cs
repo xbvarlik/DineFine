@@ -8,8 +8,6 @@ namespace DineFine.Accessor.DataAccessors.Cosmos;
 
 public class CosmosContext : DbContext
 {
-    //TODO: Implement Cosmos Base Service With Partition Keys
-    
     public DbSet<Order> Orders { get; set; } = null!;
     public DbSet<TableSession> TableSessions { get; set; } = null!;
     public DbSet<UserSession<TokenModel>> UserSessions { get; set; } = null!;
@@ -35,15 +33,18 @@ public class CosmosContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    public int SaveChanges(ClaimsPrincipal? user)
+    public int SaveChanges()
     {
-        ContextEventHandlers.OnBeforeSaveChanges(user, ChangeTracker.Entries());
+        var userId = _sessionAccessor.AccessUserId();
+        ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries());
         return base.SaveChanges();
     }
-
-    public async Task<int> SaveChangesAsync(ClaimsPrincipal? user, CancellationToken cancellationToken = new CancellationToken())
+    
+    
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
-        ContextEventHandlers.OnBeforeSaveChanges(user, ChangeTracker.Entries());
-        return await base.SaveChangesAsync(cancellationToken);
+        var userId = _sessionAccessor.AccessUserId();
+        ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries());
+        return base.SaveChangesAsync(cancellationToken);
     }
 }

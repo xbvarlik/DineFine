@@ -9,10 +9,8 @@ namespace DineFine.Accessor.DataAccessors;
 
 public static class ContextEventHandlers
 {
-    public static void OnBeforeSaveChanges(ClaimsPrincipal? user, IEnumerable<EntityEntry> entityEntries)
+    public static void OnBeforeSaveChanges(int userId, IEnumerable<EntityEntry> entityEntries)
     {
-        var userId = user == null ? 1 : int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier) ?? "1");
-        
         entityEntries.ToList().ForEach(entityEntry =>
         {
             OnBeforeCreateEntities(entityEntry, userId);
