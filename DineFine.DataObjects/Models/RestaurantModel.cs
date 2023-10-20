@@ -16,7 +16,6 @@ public class RestaurantViewModel : BaseViewModel
 {
     public string Name { get; set; } = null!;
     public virtual IEnumerable<MenuItemViewModel>? MenuItems { get; set; }
+    public virtual IEnumerable<TableOfRestaurantViewModel>? Tables { get; set; }
     public virtual IEnumerable<RestaurantCategoryViewModel>? Categories { get; set; }
-    public virtual IEnumerable<RestaurantStockInfoViewModel>? StockInfo { get; set; }
-    
 }

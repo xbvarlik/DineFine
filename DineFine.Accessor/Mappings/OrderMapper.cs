@@ -30,6 +30,7 @@ public static class OrderMapper
     {
         return new OrderViewModel
         {
+            OrderId = entity.OrderId,
             CustomerReview = entity.CustomerReview,
             RestaurantId = entity.Restaurant.Id,
             Restaurant = entity.Restaurant,

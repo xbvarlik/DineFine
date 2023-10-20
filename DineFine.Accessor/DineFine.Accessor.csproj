@@ -20,4 +20,9 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.12" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="DataAccessors\Cosmos\Migrations\" />
+      <Folder Include="DataAccessors\Mssql\Migrations\" />
+    </ItemGroup>
+
 </Project>

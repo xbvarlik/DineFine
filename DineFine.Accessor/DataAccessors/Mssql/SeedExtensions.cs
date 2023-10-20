@@ -22,7 +22,7 @@ public static class SeedExtensions
                 Id = 1,
                 Name = "SuperAdmin",
                 NormalizedName = "SUPERADMIN",
-                ConcurrencyStamp = "1",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false
@@ -32,7 +32,7 @@ public static class SeedExtensions
                 Id = 2,
                 Name = "RestaurantOwner",
                 NormalizedName = "RESTAURANTOWNER",
-                ConcurrencyStamp = "2",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false
@@ -42,7 +42,7 @@ public static class SeedExtensions
                 Id = 3,
                 Name = "KitchenPersonnel",
                 NormalizedName = "KITCHENPERSONNEL",
-                ConcurrencyStamp = "1",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false
@@ -52,7 +52,7 @@ public static class SeedExtensions
                 Id = 4,
                 Name = "Waiter",
                 NormalizedName = "WAITER",
-                ConcurrencyStamp = "1",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false
@@ -62,7 +62,7 @@ public static class SeedExtensions
                 Id = 5,
                 Name = "Customer",
                 NormalizedName = "CUSTOMER",
-                ConcurrencyStamp = "1",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false
@@ -102,7 +102,7 @@ public static class SeedExtensions
             new OrderStatus
             {
                 Id = 2,
-                Name = "InProgress",
+                Name = "Preparing",
             },
             new OrderStatus
             {
@@ -111,7 +111,7 @@ public static class SeedExtensions
             },
             new OrderStatus
             {
-                Id = 3,
+                Id = 4,
                 Name = "Delivered",
             }
         );
@@ -137,7 +137,7 @@ public static class SeedExtensions
             },
             new Unit
             {
-                Id = 3,
+                Id = 4,
                 Name = "milliliters",
             }
         );
@@ -162,7 +162,7 @@ public static class SeedExtensions
                 UserName = "SuperAdminUser",
                 FirstName = "SuperAdmin",
                 LastName = "User",
-                ConcurrencyStamp = "1",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false
@@ -173,7 +173,7 @@ public static class SeedExtensions
                 UserName = "RestaurantOwnerUser",
                 FirstName = "RestaurantOwner",
                 LastName = "User",
-                ConcurrencyStamp = "2",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false
@@ -184,7 +184,7 @@ public static class SeedExtensions
                 UserName = "KitchenPersonnelrUser",
                 FirstName = "KitchenPersonnel",
                 LastName = "User",
-                ConcurrencyStamp = "1",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false
@@ -195,7 +195,7 @@ public static class SeedExtensions
                 UserName = "WaiterUser",
                 FirstName = "Waiter",
                 LastName = "User",
-                ConcurrencyStamp = "1",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false
@@ -206,7 +206,7 @@ public static class SeedExtensions
                 UserName = "CustomerUser",
                 FirstName = "Customer",
                 LastName = "User",
-                ConcurrencyStamp = "1",
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsDeleted = false
@@ -216,7 +216,7 @@ public static class SeedExtensions
 
     private static void SeedTablesOfRestaurant(ModelBuilder builder)
     {
-        builder.Entity<Category>().HasData(
+        builder.Entity<TableOfRestaurant>().HasData(
             new TableOfRestaurant
             {
                 Id = 1,
@@ -314,8 +314,8 @@ public static class SeedExtensions
             },
             new Category
             {
-                Id = 7,
-                Name = "Snakcs",
+                Id = 8,
+                Name = "Snacks",
             }
         );
     }

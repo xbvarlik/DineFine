@@ -18,7 +18,7 @@ namespace DineFine.Util;
 
 public class CustomAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
 {
-    private readonly List<string> _allowRoles;
+    public readonly List<string> _allowRoles;
 
     public CustomAuthorizeAttribute(string allowRoles)
     {

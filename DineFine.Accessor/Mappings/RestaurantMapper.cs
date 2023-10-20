@@ -33,7 +33,7 @@ public static class RestaurantMapper
             Name = entity.Name,
             MenuItems = entity.MenuItems?.ToMenuItemViewModelList(false),
             Categories = entity.RestaurantCategories?.ToRestaurantCategoryViewModelList(false),
-            StockInfo = entity.RestaurantStockInfos?.ToRestaurantStockInfoViewModelList(false),
+            Tables = entity.TablesOfRestaurant?.ToTableOfRestaurantViewModelList(),
         };
     }
     

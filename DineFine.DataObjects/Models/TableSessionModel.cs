@@ -2,7 +2,7 @@
 
 namespace DineFine.DataObjects.Models;
 
-public class TableSessionCreateModel
+public class TableSessionCreateModel : BaseCreateModel
 {
     public int RestaurantId { get; set; }
     public RestaurantCreateModel Restaurant { get; set; } = null!;

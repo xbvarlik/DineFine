@@ -1,0 +1,40 @@
+﻿using DineFine.Util;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+namespace DineFine.API.Attributes;
+
+public class SpecificAccessAttribute : AuthorizeAttribute, IAuthorizationFilter
+{
+    private readonly List<string> _allowRoles;
+
+    public SpecificAccessAttribute(string allowRoles)
+    {
+        _allowRoles = allowRoles.Split(",").Select(x => x.Trim()).ToList();
+    }
+    
+    public void OnAuthorization(AuthorizationFilterContext context)
+    {
+        var user = context.HttpContext.User;
+
+        if (!user.Identity.IsAuthenticated) context.Result = new UnauthorizedResult();
+        
+        var authorizedForRole = _allowRoles.Exists(role => user.IsInRole(role));
+        
+        var authorized = authorizedForRole || IsUserAuthorizedInOtherAttributes(context);
+        
+        if (!authorized) context.Result = new ForbidResult();
+    }
+    
+    private bool IsUserAuthorizedInOtherAttributes(AuthorizationFilterContext context)
+    {
+        // Check other attributes
+        var attributes = context.ActionDescriptor.EndpointMetadata.OfType<CustomAuthorizeAttribute>().ToList();
+
+        return attributes.Exists(attr =>
+            attr._allowRoles != this._allowRoles && 
+            attr._allowRoles.Exists(x => context.HttpContext.User.IsInRole(x))
+        );
+    }
+}

@@ -1,15 +1,14 @@
-﻿using System.Linq.Expressions;
-using DineFine.Accessor.SessionAccessors;
+﻿using System.Security.Claims;
 using DineFine.DataObjects.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 namespace DineFine.Accessor.DataAccessors.Mssql;
 
 public class MssqlContext : IdentityDbContext<User, Role, int>
 {
+    public DbSet<AppRefreshToken> AppRefreshTokens { get; set; } = null!;
     public DbSet<Restaurant> Restaurants { get; set; } = null!;
     public DbSet<RestaurantCategory> RestaurantCategories { get; set; } = null!;
     public DbSet<Category> Categories { get; set; } = null!;
@@ -21,35 +20,41 @@ public class MssqlContext : IdentityDbContext<User, Role, int>
     public DbSet<TableOfRestaurant> TableOfRestaurants { get; set; } = null!;
     public DbSet<TableStatus> TableStatus { get; set; } = null!;
     public DbSet<Unit> Units { get; set; } = null!;
-    
-    private readonly ISessionAccessor _sessionAccessor;
-    
-    public MssqlContext(ISessionAccessor sessionAccessor)
+
+    public MssqlContext()
     {
-        _sessionAccessor = sessionAccessor;
     }
 
-    public MssqlContext(DbContextOptions options, ISessionAccessor sessionAccessor) : base(options)
+    public MssqlContext(DbContextOptions<MssqlContext> options) : base(options)
     {
-        _sessionAccessor = sessionAccessor;
     }
 
-    public override int SaveChanges()
+    public int SaveChanges(ClaimsPrincipal? user)
     {
-        ContextEventHandlers.OnBeforeSaveChanges(ChangeTracker.Entries(), _sessionAccessor);
+        ContextEventHandlers.OnBeforeSaveChanges(user, ChangeTracker.Entries());
         return base.SaveChanges();
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    public async Task<int> SaveChangesAsync(ClaimsPrincipal? user, CancellationToken cancellationToken = new CancellationToken())
     {
-        ContextEventHandlers.OnBeforeSaveChanges(ChangeTracker.Entries(), _sessionAccessor);
-        return base.SaveChangesAsync(cancellationToken);
+        ContextEventHandlers.OnBeforeSaveChanges(user, ChangeTracker.Entries());
+        return await base.SaveChangesAsync(cancellationToken);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.SeedInitialData();
-        ContextEventHandlers.OnBeforeReadEntities(builder, _sessionAccessor);
+        ContextEventHandlers.OnBeforeReadEntities(builder);
         base.OnModelCreating(builder);
+    }
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        var configuration = new ConfigurationBuilder().Build();
+
+        if (!optionsBuilder.IsConfigured)
+            optionsBuilder
+                .UseSqlServer(configuration.GetConnectionString("MssqlContext"))
+                .EnableSensitiveDataLogging();
     }
 }

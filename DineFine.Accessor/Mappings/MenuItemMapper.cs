@@ -25,14 +25,15 @@ public static class MenuItemMapper
         entity.RestaurantId = model.RestaurantId ?? entity.RestaurantId;
     }
     
-    public static MenuItemViewModel ToViewModel(this MenuItem entity, bool includeNavigationProperties = true)
+    public static MenuItemViewModel ToViewModel(this MenuItem entity, bool includeCategory = true)
     {
-        if (!includeNavigationProperties)
+        if (!includeCategory)
             return new MenuItemViewModel
             {
                 Name = entity.Name,
                 Price = entity.Price,
                 RestaurantId = entity.RestaurantId,
+                Ingredients = entity.MenuItemIngredients?.ToMenuItemIngredientViewModelList()
             };
         
         return new MenuItemViewModel

@@ -1,4 +1,5 @@
-﻿using DineFine.Accessor.SessionAccessors;
+﻿using System.Security.Claims;
+using DineFine.Accessor.SessionAccessors;
 using DineFine.DataObjects.Documents;
 using DineFine.DataObjects.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,8 @@ namespace DineFine.Accessor.DataAccessors.Cosmos;
 
 public class CosmosContext : DbContext
 {
+    //TODO: Implement Cosmos Base Service With Partition Keys
+    
     public DbSet<Order> Orders { get; set; } = null!;
     public DbSet<TableSession> TableSessions { get; set; } = null!;
     public DbSet<UserSession<TokenModel>> UserSessions { get; set; } = null!;
@@ -32,15 +35,15 @@ public class CosmosContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    public override int SaveChanges()
+    public int SaveChanges(ClaimsPrincipal? user)
     {
-        ContextEventHandlers.OnBeforeSaveChanges(ChangeTracker.Entries(), _sessionAccessor);
+        ContextEventHandlers.OnBeforeSaveChanges(user, ChangeTracker.Entries());
         return base.SaveChanges();
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    public async Task<int> SaveChangesAsync(ClaimsPrincipal? user, CancellationToken cancellationToken = new CancellationToken())
     {
-        ContextEventHandlers.OnBeforeSaveChanges(ChangeTracker.Entries(), _sessionAccessor);
-        return base.SaveChangesAsync(cancellationToken);
+        ContextEventHandlers.OnBeforeSaveChanges(user, ChangeTracker.Entries());
+        return await base.SaveChangesAsync(cancellationToken);
     }
 }

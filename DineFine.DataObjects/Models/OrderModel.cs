@@ -20,6 +20,7 @@ public class OrderUpdateModel : BaseUpdateModel
 
 public class OrderViewModel : BaseViewModel
 {
+    public string OrderId { get; set; } = null!;
     public virtual CustomerReviewViewModel? CustomerReview { get; set; }
     public int RestaurantId { get; set; }
     public virtual RestaurantViewModel? Restaurant { get; set; }

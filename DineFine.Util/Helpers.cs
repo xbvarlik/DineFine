@@ -43,4 +43,9 @@ public static class Helpers
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
     }
+
+    public static string GenerateResetPasswordLink(string appUrl, string email, string token)
+    {
+        return $"{appUrl}/api/auth/reset-password?email={email}&token={token}";
+    }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using DineFine.Accessor.SessionAccessors;
+using System.Security.Claims;
 using DineFine.DataObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -9,9 +9,9 @@ namespace DineFine.Accessor.DataAccessors;
 
 public static class ContextEventHandlers
 {
-    public static void OnBeforeSaveChanges(IEnumerable<EntityEntry> entityEntries, ISessionAccessor sessionAccessor)
+    public static void OnBeforeSaveChanges(ClaimsPrincipal? user, IEnumerable<EntityEntry> entityEntries)
     {
-        var userId = sessionAccessor.AccessUserId();
+        var userId = user == null ? 1 : int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier) ?? "1");
         
         entityEntries.ToList().ForEach(entityEntry =>
         {
@@ -46,12 +46,11 @@ public static class ContextEventHandlers
         b.IsDeleted = true;
     }
 
-    public static void OnBeforeReadEntities(ModelBuilder builder, ISessionAccessor sessionAccessor)
+    public static void OnBeforeReadEntities(ModelBuilder builder)
     {
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
             SoftDeleteFilter(builder, entityType);
-            TenantIdFilter(builder, entityType, sessionAccessor);
         }
     }
     
@@ -66,24 +65,6 @@ public static class ContextEventHandlers
             
         var filter = Expression.Lambda(Expression.Not(isDeletedProp), parameter);
             
-        builder.Entity(entityType.ClrType).HasQueryFilter(filter);
-    }
-
-    private static void TenantIdFilter(ModelBuilder builder, IMutableEntityType entityType, ISessionAccessor sessionAccessor)
-    {
-        var tenantIdProperty = entityType.FindProperty("RestaurantId");
-        
-        if (tenantIdProperty == null || tenantIdProperty.ClrType != typeof(int)) return;
-        
-        var currentTenantId = sessionAccessor.AccessTenantId();
-        var currentTenantIdExpression = Expression.Constant(currentTenantId);
-        
-        var parameter = Expression.Parameter(entityType.ClrType);
-        var tenantIdProp = Expression.PropertyOrField(parameter, "RestaurantId");
-
-        var equals = Expression.Equal(tenantIdProp, currentTenantIdExpression);
-        var filter = Expression.Lambda(equals, parameter);
-        
         builder.Entity(entityType.ClrType).HasQueryFilter(filter);
     }
 }
