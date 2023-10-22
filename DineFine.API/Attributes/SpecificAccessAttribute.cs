@@ -16,6 +16,9 @@ public class SpecificAccessAttribute : AuthorizeAttribute, IAuthorizationFilter
     
     public void OnAuthorization(AuthorizationFilterContext context)
     {
+        if (IsOpenRoute(context))
+            return;
+        
         var user = context.HttpContext.User;
 
         if (!user.Identity.IsAuthenticated) context.Result = new UnauthorizedResult();
@@ -27,14 +30,21 @@ public class SpecificAccessAttribute : AuthorizeAttribute, IAuthorizationFilter
         if (!authorized) context.Result = new ForbidResult();
     }
     
-    private bool IsUserAuthorizedInOtherAttributes(AuthorizationFilterContext context)
+    private bool IsUserAuthorizedInOtherAttributes(ActionContext context)
     {
         // Check other attributes
-        var attributes = context.ActionDescriptor.EndpointMetadata.OfType<CustomAuthorizeAttribute>().ToList();
+        var attributes = context.ActionDescriptor.EndpointMetadata.OfType<SpecificAccessAttribute>().ToList();
 
         return attributes.Exists(attr =>
             attr._allowRoles != this._allowRoles && 
             attr._allowRoles.Exists(x => context.HttpContext.User.IsInRole(x))
         );
+    }
+
+    private static bool IsOpenRoute(ActionContext context)
+    {
+        //Check if AllowAnonymous attribute is present
+        var attributes = context.ActionDescriptor.EndpointMetadata.OfType<AllowAnonymousAttribute>().ToList();
+        return attributes.Any();
     }
 }

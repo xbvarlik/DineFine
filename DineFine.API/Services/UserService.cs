@@ -26,7 +26,7 @@ public class UserService
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == id);
         
-        if (user == null) throw DynamicExceptions.NotFoundException("User not found");
+        if (user == null) throw new DineFineNotFoundException();
 
         return user;
     }

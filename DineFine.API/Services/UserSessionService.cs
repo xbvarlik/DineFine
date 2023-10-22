@@ -4,7 +4,6 @@ using DineFine.DataObjects.Entities;
 using DineFine.DataObjects.Models;
 using DineFine.Exception;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace DineFine.API.Services;
 
@@ -22,15 +21,16 @@ public class UserSessionService
         _userRoleService = userRoleService;
         _context = context;
     }
-    
-    public async Task<UserSession<TokenModel>?> GetUserSessionAsync(int userId)
+
+    private async Task<UserSession<TokenModel>?> GetUserSessionAsync(int userId)
     {
         return await _context.UserSessions.FirstOrDefaultAsync(session => session.UserId == userId);
     }
 
     public async Task<UserSession<TokenModel>?> GetUserSessionByTokenAsync(string accessToken)
     {
-        var response = await _context.UserSessions.FirstOrDefaultAsync(session => session.LoginInfo.AccessToken == accessToken);
+        var response = await _context.UserSessions.FirstOrDefaultAsync(session => 
+            session.LoginInfo.AccessToken == accessToken);
         return response;
     }
     
@@ -39,35 +39,26 @@ public class UserSessionService
     {
         var userRoles = await _userRoleService.GetUserRolesAsync(user.Id);
         
-        if(userRoles is null) throw DynamicExceptions.NotFoundException("User does not have roles.");
+        if(userRoles is null) throw new DineFineNotFoundException();
         
         var login = await _tokenService.CreateAccessTokenAsync(user);
         
-        var session = CreteUserSessionEntity(user, userRoles!, login);
+        var session = CreteUserSessionEntity(user, userRoles, login);
 
         await UpsertUserUserSessionAsync(session);
         return login;
     }
 
-    public async Task<UserSession<TokenModel>> UpsertUserUserSessionAsync(UserSession<TokenModel> session)
+    private async Task UpsertUserUserSessionAsync(UserSession<TokenModel> session)
     {
-        UserSession<TokenModel> entity;
-        
         var currentSession = await GetUserSessionAsync(session.UserId);
+        
         if (currentSession is null)
-        {
             await _context.UserSessions.AddAsync(session);
-            entity = session;
-        }
         else
-        {
             _context.Entry(currentSession).CurrentValues.SetValues(session);
-            entity = currentSession;
-        }
 
         await _context.SaveChangesAsync();
-
-        return entity;
     }
 
     private UserSession<TokenModel> CreteUserSessionEntity(User user, IList<string> userRoles, TokenModel login)

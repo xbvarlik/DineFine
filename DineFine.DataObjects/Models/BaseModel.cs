@@ -8,3 +8,8 @@ public class BaseViewModel
     public int Id { get; set; }
 }
 public class BaseQueryFilterModel { }
+
+public class BaseCosmosQueryFilterModel : BaseQueryFilterModel
+{
+    public string PartitionKey { get; set; } = null!;
+}

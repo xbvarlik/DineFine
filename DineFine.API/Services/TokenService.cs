@@ -36,18 +36,18 @@ public class TokenService
         return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
     }
     
-    private async Task<IEnumerable<Claim>> GetUserClaimsAsync(User User, string audience)
+    private async Task<IEnumerable<Claim>> GetUserClaimsAsync(User user, string audience)
     {
         var userClaims = new List<Claim>
         {
-            new (ClaimTypes.NameIdentifier, User.Id.ToString()),
-            new (JwtRegisteredClaimNames.Email, User.Email!),
-            new (ClaimTypes.Name, User.UserName!),
+            new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new (JwtRegisteredClaimNames.Email, user.Email!),
+            new (ClaimTypes.Name, user.UserName!),
             new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new (JwtRegisteredClaimNames.Aud, audience)
         };
 
-        var userRoles = await _userManager.GetRolesAsync(User);
+        var userRoles = await _userManager.GetRolesAsync(user);
         
         foreach (var userRole in userRoles)
         {
@@ -72,7 +72,7 @@ public class TokenService
         return Convert.ToBase64String(numberBytes);
     }
     
-    private async Task<TokenModel> CreateToken(User User)
+    private async Task<TokenModel> CreateToken(User user)
     {
         var accessTokenExpirationDateTime = DateTime.UtcNow.AddMinutes(60);
         var refreshTokenExpirationDateTime = DateTime.UtcNow.AddMinutes(360);
@@ -84,7 +84,7 @@ public class TokenService
             issuer: _jwtBearerTokenSettings.Issuer,
             expires: accessTokenExpirationDateTime,
             notBefore: DateTime.UtcNow,
-            claims: await GetUserClaimsAsync(User, _jwtBearerTokenSettings.Audiences[0]),
+            claims: await GetUserClaimsAsync(user, _jwtBearerTokenSettings.Audiences[0]),
             signingCredentials: signingCredentials
         );
         var jwtHandler = new JwtSecurityTokenHandler();
@@ -92,7 +92,7 @@ public class TokenService
         
         return new TokenModel
         {
-            UserId = User.Id,
+            UserId = user.Id,
             AccessToken = token,
             AccessTokenExpiration = accessTokenExpirationDateTime,
             RefreshToken = CreateRefreshToken(),
@@ -100,17 +100,17 @@ public class TokenService
         };
     }
     
-    public async Task<TokenModel> CreateAccessTokenAsync(User User)
+    public async Task<TokenModel> CreateAccessTokenAsync(User user)
     {
-        var accessTokenModel = await CreateToken(User);
+        var accessTokenModel = await CreateToken(user);
 
-        var appRefreshToken = await _dbSet.SingleOrDefaultAsync(x => x.UserId == User.Id);
+        var appRefreshToken = await _dbSet.SingleOrDefaultAsync(x => x.UserId == user.Id);
 
         if (appRefreshToken == null)
         {
             await _dbSet.AddAsync(new AppRefreshToken
             {
-                UserId = User.Id,
+                UserId = user.Id,
                 RefreshToken = accessTokenModel.RefreshToken,
                 RefreshTokenExpiration = accessTokenModel.RefreshTokenExpiration
             });
@@ -131,12 +131,12 @@ public class TokenService
         var dbRefreshToken = await _dbSet.SingleOrDefaultAsync(x => x.RefreshToken == refreshToken);
 
         if (dbRefreshToken == null) 
-            throw DynamicExceptions.NullException("Refresh token is null");
+            throw new DineFineNullException();
 
         var user = await _userManager.FindByIdAsync(dbRefreshToken.UserId.ToString());
 
         if (user == null) 
-            throw DynamicExceptions.NotFoundException("User not found");
+            throw new DineFineNotFoundException();
 
         var tokenModel = await CreateToken(user);
         dbRefreshToken.RefreshToken = tokenModel.RefreshToken;
@@ -146,12 +146,12 @@ public class TokenService
         return tokenModel;
     }
     
-    public async Task RevokeRefreshTokenAsync(int UserId)
+    public async Task RevokeRefreshTokenAsync(int userId)
     {
-        var dbRefreshToken = await _dbSet.SingleOrDefaultAsync(rt => rt.UserId == UserId);
+        var dbRefreshToken = await _dbSet.SingleOrDefaultAsync(rt => rt.UserId == userId);
 
         if (dbRefreshToken == null) 
-            throw DynamicExceptions.NullException("Refresh token is null");
+            throw new DineFineNullException();
 
         _dbSet.Remove(dbRefreshToken);
         await _appDbContext.SaveChangesAsync();

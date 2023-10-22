@@ -10,7 +10,7 @@ namespace DineFine.API.Controllers;
 public class RestaurantStockInfoController : BaseController<int, RestaurantStockInfo, RestaurantStockInfoViewModel, 
     RestaurantStockInfoCreateModel, RestaurantStockInfoUpdateModel, RestaurantStockInfoQueryFilterModel, MssqlContext>
 {
-    protected RestaurantStockInfoController(RestaurantStockInfoService service) : base(service)
+    public RestaurantStockInfoController(RestaurantStockInfoService service) : base(service)
     {
     }
 }

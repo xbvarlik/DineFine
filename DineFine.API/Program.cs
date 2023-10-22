@@ -21,3 +21,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+// TODO: seed data don't see passwords
+// TODO: change sql to local db

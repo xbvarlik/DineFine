@@ -11,52 +11,51 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
     where TViewModel: BaseViewModel
     where TCreateModel: BaseCreateModel
     where TUpdateModel: BaseUpdateModel
-    where TQueryFilterModel: BaseQueryFilterModel?
+    where TQueryFilterModel: BaseCosmosQueryFilterModel?
 
 {
-    protected readonly CosmosContext Context;
-    protected readonly string PartitionKey;
+    private readonly CosmosContext _context;
 
-    protected BaseCosmosService(string partitionKey, CosmosContext context)
+    protected BaseCosmosService(CosmosContext context)
     {
-        PartitionKey = partitionKey;
-        Context = context;
+        _context = context;
     }
 
-    protected virtual IQueryable<TEntity> GetEntityDbSetWithPartitionKey() => Context.Set<TEntity>().WithPartitionKey(PartitionKey);
+    protected virtual IQueryable<TEntity> GetEntityDbSetWithPartitionKey(string? partitionKey)
+        => partitionKey == null ? GetEntityDbSet() : GetEntityDbSet().WithPartitionKey(partitionKey);
 
-    protected virtual DbSet<TEntity> GetEntityDbSet() => Context.Set<TEntity>();
+    protected virtual DbSet<TEntity> GetEntityDbSet() => _context.Set<TEntity>();
 
     public virtual async Task<IEnumerable<TViewModel>> GetAllAsync(TQueryFilterModel? queryFilter = null, CancellationToken cancellationToken = default)
     {
         try
         {
-            var entities = GetEntityDbSetWithPartitionKey();
+            var entities = GetEntityDbSetWithPartitionKey(queryFilter?.PartitionKey);
             var filteredEntities = await QuerySpecification(queryFilter, entities).ToListAsync(cancellationToken);
             
             return await OnAfterGetAllAsync(filteredEntities, cancellationToken);
         }
         catch (System.Exception e)
         {
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException(e);
         }
     }
     
-    public virtual async Task<TViewModel> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+    public virtual async Task<TViewModel> GetByIdAsync(string id, string? partitionKey, CancellationToken cancellationToken = default)
     {
         try
         {
-            var entity = await GetEntityDbSetWithPartitionKey().FirstOrDefaultAsync(GenerateLambdaExpressionForId(id), cancellationToken);
+            var entity = await GetEntityDbSetWithPartitionKey(partitionKey).FirstOrDefaultAsync(GenerateLambdaExpressionForId(id), cancellationToken);
             var result = OnAfterGet(entity, cancellationToken);
             
             if (result == null)
-                throw DynamicExceptions.NotFoundException();
+                throw new DineFineNotFoundException();
             
             return result;
         }
         catch (System.Exception e)
         {
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException(e);
         }
     }
     
@@ -66,12 +65,12 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
         {
             var entity = await OnBeforeCreateAsync(createModel, cancellationToken);
             await GetEntityDbSet().AddAsync(entity, cancellationToken);
-            await Context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
             return await OnAfterCreateAsync(entity, cancellationToken);
         }
         catch (System.Exception e)
         {
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException(e);
         }
     }
     
@@ -82,16 +81,16 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
             var entity = await GetEntityDbSet().FirstOrDefaultAsync(GenerateLambdaExpressionForId(id), cancellationToken);
             
             if(entity == null)
-                throw DynamicExceptions.NotFoundException();
+                throw new DineFineNotFoundException();
             
             entity = await OnBeforeUpdateAsync(entity, updateModel, cancellationToken);
             GetEntityDbSet().Update(entity);
-            await Context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
             return await OnAfterUpdateAsync(entity, cancellationToken);
         }
         catch (System.Exception e)
         {
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException(e);
         }
     }
     
@@ -102,14 +101,14 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
             var entity = await GetEntityDbSet().FirstOrDefaultAsync(GenerateLambdaExpressionForId(id), cancellationToken);
             
             if(entity == null)
-                throw DynamicExceptions.NotFoundException();
+                throw new DineFineNotFoundException();
             
             GetEntityDbSet().Remove(entity);
-            await Context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
         catch (System.Exception e)
         {
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException(e);
         }
     }
 

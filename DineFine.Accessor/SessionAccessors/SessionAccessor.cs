@@ -15,34 +15,41 @@ public class SessionAccessor : ISessionAccessor
     public SessionAccessor(IHttpContextAccessor httpContextAccessor, ICacheManager cacheManager)
     {
         _cacheManager = cacheManager;
-        _accessToken = IsMigration() ?
-            null : 
-            httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
-    }
-
-    private static bool IsMigration()
-    {
-        var hostingEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        Console.WriteLine($"Hosting Environment: {hostingEnvironment}");
-        return hostingEnvironment == "Development";
+        _accessToken = httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
     }
 
     public int AccessUserId()
     {
-        var userSessionInfo = _cacheManager.GetAsync<UserSession<TokenModel>>(_accessToken!).Result;
+        UserSession<TokenModel>? userSessionInfo = null;
+        
+        if (_accessToken != null)
+            userSessionInfo = _cacheManager.GetAsync<UserSession<TokenModel>>(_accessToken).Result;
+        
         return userSessionInfo?.UserId ?? 0;
     }
 
     public int AccessTenantId()
     {
-        var userSessionInfo = _cacheManager.GetAsync<UserSession<TokenModel>>(_accessToken!).Result;
-        var tableSessionInfo = _cacheManager.GetAsync<TableSession>(userSessionInfo!.UserId.ToString()).Result;
-        return userSessionInfo?.TenantId ?? tableSessionInfo?.RestaurantId ?? 0;
+        UserSession<TokenModel>? userSessionInfo = null;
+        TableSession? tableSessionInfo = null;
+        
+        if (_accessToken != null)
+            userSessionInfo = _cacheManager.GetAsync<UserSession<TokenModel>>(_accessToken).Result;
+
+        if(userSessionInfo != null && userSessionInfo.TenantId != 0)
+            return userSessionInfo.TenantId;
+        
+        tableSessionInfo = _cacheManager.GetAsync<TableSession>(userSessionInfo!.UserId.ToString()).Result;
+        return tableSessionInfo?.RestaurantId ?? 0;
     }
 
     public async Task<int> AccessUserIdAsync()
     {
-        var userSessionInfo = await _cacheManager.GetAsync<UserSession<TokenModel>>(_accessToken!);
+        UserSession<TokenModel>? userSessionInfo = null;
+        
+        if(_accessToken != null)
+            userSessionInfo = await _cacheManager.GetAsync<UserSession<TokenModel>>(_accessToken);
+        
         return userSessionInfo?.UserId ?? 0;
     }
 

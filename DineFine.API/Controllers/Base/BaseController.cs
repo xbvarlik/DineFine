@@ -2,6 +2,7 @@
 using DineFine.API.Result;
 using DineFine.API.Services;
 using DineFine.DataObjects.Models;
+using DineFine.Exception;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,14 +27,14 @@ public class BaseController<TId, TEntity, TViewModel, TCreateModel, TUpdateModel
     }
 
     [HttpGet]
-    public virtual async Task<IActionResult> GetAllAsync(TQueryFilterModel? queryFilter = null, CancellationToken cancellationToken = default)
+    public virtual async Task<IActionResult> GetAllAsync([FromQuery]TQueryFilterModel? queryFilter = null, CancellationToken cancellationToken = default)
     {
         var result = await Service.GetAllAsync(queryFilter, cancellationToken);
         return ApiResult.CreateActionResult(ServiceResult<IEnumerable<TViewModel>>.Success(200, result));
     }
 
     [HttpGet("{id}")]
-    public virtual async Task<IActionResult> GetByIdAsync(TId id, CancellationToken cancellationToken = default)
+    public virtual async Task<IActionResult> GetByIdAsync([FromRoute]TId id, CancellationToken cancellationToken = default)
     {
         var result = await Service.GetByIdAsync(id, cancellationToken);
         return ApiResult.CreateActionResult(ServiceResult<TViewModel>.Success(200, result));

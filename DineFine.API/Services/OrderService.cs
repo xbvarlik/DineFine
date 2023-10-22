@@ -7,11 +7,11 @@ using DineFine.DataObjects.Models;
 namespace DineFine.API.Services;
 
 public class OrderService : BaseCosmosService<Order, OrderViewModel, OrderCreateModel, OrderUpdateModel, 
-    BaseQueryFilterModel>
+    BaseCosmosQueryFilterModel>
 {
     private readonly INotificationService _notificationService;
     
-    public OrderService(CosmosContext context, INotificationService notificationService) : base(CosmosPartitionKeys.RestaurantId, context)
+    public OrderService(CosmosContext context, INotificationService notificationService) : base(context)
     {
         _notificationService = notificationService;
     }

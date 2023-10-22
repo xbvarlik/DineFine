@@ -10,7 +10,7 @@ namespace DineFine.API.Controllers;
 public class CategoryController : BaseController<int, Category, CategoryViewModel, CategoryCreateModel, CategoryUpdateModel, 
     BaseQueryFilterModel, MssqlContext>
 {
-    protected CategoryController(CategoryService service) : base(service)
+    public CategoryController(CategoryService service) : base(service)
     {
     }
 

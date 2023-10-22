@@ -44,10 +44,11 @@ public class MssqlContext : IdentityDbContext<User, Role, int>
         return base.SaveChanges();
     }
 
-    public async Task<int> SaveChangesAsync(int userId, CancellationToken cancellationToken = new CancellationToken())
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
+        var userId = _sessionAccessor.AccessUserId();
         ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries());
-        return await base.SaveChangesAsync(cancellationToken);
+        return base.SaveChangesAsync(cancellationToken);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

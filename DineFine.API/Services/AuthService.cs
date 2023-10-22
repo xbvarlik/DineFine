@@ -61,7 +61,7 @@ public class AuthService
         var roleResult = await _userRoleService.AddUserToRoleAsync(user.Id, roleId);
         
         if(!roleResult.Succeeded)
-            throw DynamicExceptions.OperationalException("Error adding user to role");
+            throw new DineFineOperationalException("Error adding user to role");
         
         var password = signUpModel.Password;
         
@@ -75,14 +75,14 @@ public class AuthService
     {
         var user = await _userManager.FindByEmailAsync(loginModel.Email);
 
-        if (user is null) throw DynamicExceptions.NotFoundException("User not found");
+        if (user is null) throw new DineFineNotFoundException();
         
         var password = loginModel.Password;
         var rememberMe = loginModel.RememberMe;
         
         var signInResult = await _signInManager.PasswordSignInAsync(user, password, rememberMe, true);
         
-        if (!signInResult.Succeeded) throw DynamicExceptions.OperationalException("Invalid credentials");
+        if (!signInResult.Succeeded) throw new DineFineOperationalException("Invalid credentials");
 
         var result = await _tokenService.CreateAccessTokenAsync(user);
         
@@ -93,7 +93,7 @@ public class AuthService
     {
         var user = await _userManager.FindByNameAsync(userName);
 
-        if (user == null) throw DynamicExceptions.NotFoundException("User not found");
+        if (user == null) throw new DineFineNotFoundException();
         
         await _tokenService.RevokeRefreshTokenAsync(user.Id);
         await _signInManager.SignOutAsync();
@@ -101,7 +101,7 @@ public class AuthService
 
     public async Task<TokenModel> RefreshAccessTokenAsync(string refreshToken)
     {
-        if (refreshToken == null) throw DynamicExceptions.NullException("Refresh token is null");
+        if (refreshToken == null) throw new DineFineNullException();
         
         return await _tokenService.CreateAccessTokenByRefreshTokenAsync(refreshToken);
     }
@@ -110,7 +110,7 @@ public class AuthService
     {
         var user = await _userManager.FindByEmailAsync(email);
         
-        if (user is null) throw DynamicExceptions.NotFoundException("User not found");
+        if (user is null) throw new DineFineNotFoundException();
         
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
         var appUrl = _configuration["profiles:https:applicationUrl"];
@@ -127,11 +127,11 @@ public class AuthService
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
         
-        if (user is null) throw DynamicExceptions.NotFoundException("User not found");
+        if (user is null) throw new DineFineNotFoundException();
         
         var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
         
-        if (!result.Succeeded) throw DynamicExceptions.OperationalException("Password can not be reset");
+        if (!result.Succeeded) throw new DineFineOperationalException("Password can not be reset");
         
         return result;
     }

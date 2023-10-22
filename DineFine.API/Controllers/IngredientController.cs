@@ -10,7 +10,7 @@ namespace DineFine.API.Controllers;
 public class IngredientController : BaseController<int, Ingredient, IngredientViewModel, IngredientCreateModel, 
     IngredientUpdateModel, BaseQueryFilterModel, MssqlContext>
 {
-    protected IngredientController(IngredientService service) : base(service)
+    public IngredientController(IngredientService service) : base(service)
     {
     }
     

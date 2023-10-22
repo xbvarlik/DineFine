@@ -8,9 +8,9 @@ namespace DineFine.API.Controllers;
 
 [SpecificAccess("RestaurantOwner, KitchenPersonnel, Waiter")]
 public class OrderController : BaseCosmosController<Order, OrderViewModel, OrderCreateModel, OrderUpdateModel, 
-    BaseQueryFilterModel>
+    BaseCosmosQueryFilterModel>
 {
-    protected OrderController(OrderService service) : base(service)
+    public OrderController(OrderService service) : base(service)
     {
     }
 }

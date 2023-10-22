@@ -11,7 +11,7 @@ namespace DineFine.API.Controllers;
 public class RestaurantController : BaseController<int, Restaurant, RestaurantViewModel, RestaurantCreateModel, 
     RestaurantUpdateModel, BaseQueryFilterModel, MssqlContext>
 {
-    protected RestaurantController(RestaurantService service) : base(service)
+    public RestaurantController(RestaurantService service) : base(service)
     {
     }
 

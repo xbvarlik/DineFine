@@ -23,13 +23,13 @@ public class UserRoleService
         var user = await _userManager.FindByIdAsync(userId.ToString());
         var role = await _roleManager.FindByIdAsync(roleId.ToString());
         
-        if (user == null) throw DynamicExceptions.NotFoundException("User not found");
-        if (role == null) throw DynamicExceptions.NotFoundException("Role not found");
-        if (await IsUserInRoleAsync(user, role.Name!)) throw DynamicExceptions.OperationalException("User is already in role");
+        if (user == null) throw new DineFineNotFoundException();
+        if (role == null) throw new DineFineNotFoundException();
+        if (await IsUserInRoleAsync(user, role.Name!)) throw new DineFineOperationalException("User is already in role");
         
         var result = await _userManager.AddToRoleAsync(user, role.Name!);
         
-        if (!result.Succeeded) throw DynamicExceptions.OperationalException("Error adding user to role");
+        if (!result.Succeeded) throw new DineFineOperationalException("Error adding user to role");
         
         await _context.SaveChangesAsync();
         return result;
@@ -40,13 +40,13 @@ public class UserRoleService
         var user = await _userManager.FindByIdAsync(userId.ToString());
         var role = await _roleManager.FindByIdAsync(roleId.ToString());
         
-        if (user == null) throw DynamicExceptions.NotFoundException("User not found");
-        if (role == null) throw DynamicExceptions.NotFoundException("Role not found");
-        if (!await IsUserInRoleAsync(user, role.Name!)) throw DynamicExceptions.OperationalException("User is not in role");
+        if (user == null) throw new DineFineNotFoundException();
+        if (role == null) throw new DineFineNotFoundException();
+        if (!await IsUserInRoleAsync(user, role.Name!)) throw new DineFineOperationalException("User is not in role");
         
         var result = await _userManager.RemoveFromRoleAsync(user, role.Name!);
         
-        if (!result.Succeeded) throw DynamicExceptions.OperationalException("Error removing user from role");
+        if (!result.Succeeded) throw new DineFineOperationalException("Error removing user from role");
         
         await _context.SaveChangesAsync();
         return result;
@@ -56,7 +56,7 @@ public class UserRoleService
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
         
-        if (user == null) throw DynamicExceptions.NotFoundException("User not found");
+        if (user == null) throw new DineFineNotFoundException();
         
         return await _userManager.GetRolesAsync(user);
     }
@@ -65,7 +65,7 @@ public class UserRoleService
     {
         var role = await _roleManager.FindByIdAsync(roleId.ToString());
         
-        if (role == null) throw DynamicExceptions.NotFoundException("Role not found");
+        if (role == null) throw new DineFineNotFoundException();
 
         return (await _userManager.GetUsersInRoleAsync(role.Name!) as List<User>)!;
     }

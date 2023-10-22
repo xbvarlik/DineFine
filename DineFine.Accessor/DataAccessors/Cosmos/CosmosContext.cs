@@ -12,22 +12,21 @@ public class CosmosContext : DbContext
     public DbSet<TableSession> TableSessions { get; set; } = null!;
     public DbSet<UserSession<TokenModel>> UserSessions { get; set; } = null!;
 
-    private readonly ISessionAccessor _sessionAccessor;
+    private readonly ISessionAccessor? _sessionAccessor;
     
-    public CosmosContext(ISessionAccessor sessionAccessor)
+    public CosmosContext()
     {
-        _sessionAccessor = sessionAccessor;
+
     }
     
     public CosmosContext(DbContextOptions options, ISessionAccessor sessionAccessor) : base(options)
     {
-        _sessionAccessor = sessionAccessor;
-        Database.EnsureCreated();
+        _sessionAccessor = sessionAccessor; 
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Order>().ToContainer(nameof(Orders)).HasPartitionKey(x => x.Restaurant.Id);
+        modelBuilder.Entity<Order>().ToContainer(nameof(Orders)).HasPartitionKey(x => x.RestaurantId);
         modelBuilder.Entity<TableSession>().ToContainer(nameof(TableSessions)).HasPartitionKey(x => x.RestaurantId);
         modelBuilder.Entity<UserSession<TokenModel>>().ToContainer(nameof(UserSessions)).HasPartitionKey(x => x.UserId);
         base.OnModelCreating(modelBuilder);

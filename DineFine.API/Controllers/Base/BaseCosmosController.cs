@@ -15,7 +15,7 @@ public class BaseCosmosController<TEntity, TViewModel, TCreateModel, TUpdateMode
     where TViewModel: BaseViewModel
     where TCreateModel: BaseCreateModel
     where TUpdateModel: BaseUpdateModel
-    where TQueryFilterModel: BaseQueryFilterModel?
+    where TQueryFilterModel: BaseCosmosQueryFilterModel?
 {   
     protected readonly BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpdateModel, TQueryFilterModel> Service;
 
@@ -25,16 +25,16 @@ public class BaseCosmosController<TEntity, TViewModel, TCreateModel, TUpdateMode
     }
 
     [HttpGet]
-    public virtual async Task<IActionResult> GetAllAsync(TQueryFilterModel? queryFilter = null, CancellationToken cancellationToken = default)
+    public virtual async Task<IActionResult> GetAllAsync([FromQuery]TQueryFilterModel? queryFilter = null, CancellationToken cancellationToken = default)
     {
         var result = await Service.GetAllAsync(queryFilter, cancellationToken);
         return ApiResult.CreateActionResult(ServiceResult<IEnumerable<TViewModel>>.Success(200, result));
     }
 
     [HttpGet("{id}")]
-    public virtual async Task<IActionResult> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+    public virtual async Task<IActionResult> GetByIdAsync([FromRoute]string id, [FromQuery]string? partitionKey, CancellationToken cancellationToken = default)
     {
-        var result = await Service.GetByIdAsync(id, cancellationToken);
+        var result = await Service.GetByIdAsync(id, partitionKey, cancellationToken);
         return ApiResult.CreateActionResult(ServiceResult<TViewModel>.Success(200, result));
     }
 

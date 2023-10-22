@@ -48,7 +48,7 @@ public class AuthController : ControllerBase
         var response = await _service.LoginAsync(loginModel);
         
         var user = await _userManager.FindByEmailAsync(loginModel.Email);
-        if(user == null) throw DynamicExceptions.NotFoundException("User not found");
+        if(user == null) throw new DineFineNotFoundException();
         
         await CreateUserSessionAsync(user);
         
@@ -74,7 +74,7 @@ public class AuthController : ControllerBase
     {
         var userName = HttpContext.User.Identity?.Name;
 
-        if (userName == null) throw DynamicExceptions.NotFoundException("User not found");
+        if (userName == null) throw new DineFineNotFoundException();
         
         await _service.LogoutAsync(userName);
         return ApiResult.CreateActionResult(ServiceResult<NoContent>.Success(200));

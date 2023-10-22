@@ -7,9 +7,9 @@ using DineFine.DataObjects.Models;
 namespace DineFine.API.Services;
 
 public class TableSessionService : BaseCosmosService<TableSession, TableSessionViewModel, TableSessionCreateModel, 
-    TableSessionUpdateModel, BaseQueryFilterModel>
+    TableSessionUpdateModel, BaseCosmosQueryFilterModel>
 {
-    public TableSessionService(CosmosContext context) : base(CosmosPartitionKeys.RestaurantId, context)
+    public TableSessionService(CosmosContext context) : base(context)
     {
     }
 

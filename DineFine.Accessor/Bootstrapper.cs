@@ -27,7 +27,7 @@ public static class Bootstrapper
         var databaseName = configuration.GetValue<string>("CosmosSettings:DatabaseName");
 
         if (connectionString == null || databaseName == null)
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException();
         
         services.AddDbContext<CosmosContext>(x => x.UseCosmos(connectionString, databaseName));
     }

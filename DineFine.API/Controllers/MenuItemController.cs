@@ -12,7 +12,7 @@ namespace DineFine.API.Controllers;
 public class MenuItemController : BaseController<int, MenuItem, MenuItemViewModel, MenuItemCreateModel, MenuItemUpdateModel, 
     MenuItemQueryFilterModel, MssqlContext>
 {
-    protected MenuItemController(MenuItemService service) : base(service)
+    public MenuItemController(MenuItemService service) : base(service)
     {
     }
 

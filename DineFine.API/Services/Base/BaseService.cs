@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using DineFine.DataObjects.Entities;
 using DineFine.DataObjects.Models;
 using DineFine.Exception;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +35,7 @@ public abstract class BaseService<TId, TEntity, TViewModel, TCreateModel, TUpdat
         }
         catch (System.Exception e)
         {
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException(e);
         }
     }
     
@@ -48,13 +47,13 @@ public abstract class BaseService<TId, TEntity, TViewModel, TCreateModel, TUpdat
             var result = OnAfterGet(entity, cancellationToken);
             
             if (result == null)
-                throw DynamicExceptions.NotFoundException();
+                throw new DineFineNotFoundException();
             
             return result;
         }
         catch (System.Exception e)
         {
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException(e);
         }
     }
     
@@ -69,7 +68,7 @@ public abstract class BaseService<TId, TEntity, TViewModel, TCreateModel, TUpdat
         }
         catch (System.Exception e)
         {
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException(e);
         }
     }
     
@@ -80,7 +79,7 @@ public abstract class BaseService<TId, TEntity, TViewModel, TCreateModel, TUpdat
             var entity = await GetEntityDbSet().FirstOrDefaultAsync(GenerateLambdaExpressionForId(id), cancellationToken);
             
             if(entity == null)
-                throw DynamicExceptions.NotFoundException();
+                throw new DineFineNotFoundException();
             
             entity = await OnBeforeUpdateAsync(entity, updateModel, cancellationToken);
             GetEntityDbSet().Update(entity);
@@ -89,7 +88,7 @@ public abstract class BaseService<TId, TEntity, TViewModel, TCreateModel, TUpdat
         }
         catch (System.Exception e)
         {
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException(e);
         }
     }
     
@@ -100,14 +99,14 @@ public abstract class BaseService<TId, TEntity, TViewModel, TCreateModel, TUpdat
             var entity = await GetEntityDbSet().FirstOrDefaultAsync(GenerateLambdaExpressionForId(id), cancellationToken);
             
             if(entity == null)
-                throw DynamicExceptions.NotFoundException();
+                throw new DineFineNotFoundException();
             
             GetEntityDbSet().Remove(entity);
             await Context.SaveChangesAsync(cancellationToken);
         }
         catch (System.Exception e)
         {
-            throw DynamicExceptions.DatabaseException();
+            throw new DineFineDatabaseException(e);
         }
     }
 

@@ -18,7 +18,7 @@ namespace DineFine.Util;
 
 public class CustomAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
 {
-    public readonly List<string> _allowRoles;
+    private readonly List<string> _allowRoles;
 
     public CustomAuthorizeAttribute(string allowRoles)
     {
@@ -30,7 +30,7 @@ public class CustomAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
         var user = context.HttpContext.User;
 
         if (user.Identity == null)
-            throw DynamicExceptions.UnauthorizedException("User identity is null.");
+            throw new DineFineUnauthorizedException();
         
         if (!user.Identity.IsAuthenticated) context.Result = new UnauthorizedResult();
         

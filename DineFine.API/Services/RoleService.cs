@@ -28,7 +28,7 @@ public class RoleService
     {
         var role = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Id == id);
         
-        if (role == null) throw DynamicExceptions.NotFoundException("Role not found");
+        if (role == null) throw new DineFineNotFoundException();
 
         return role;
     }
@@ -38,7 +38,7 @@ public class RoleService
         var role = model.ToEntity();
         var result = await _roleManager.CreateAsync(role);
         
-        if (!result.Succeeded) throw DynamicExceptions.OperationalException("Error creating role");
+        if (!result.Succeeded) throw new DineFineOperationalException("Error creating role");
         
         await _context.SaveChangesAsync();
         return role.ToViewModel();
@@ -48,12 +48,12 @@ public class RoleService
     {
         var role = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Id == id);
         
-        if (role == null) throw DynamicExceptions.NotFoundException("Role not found");
+        if (role == null) throw new DineFineNotFoundException();
         
         role.ToUpdatedEntity(model);
         var result = await _roleManager.UpdateAsync(role);
         
-        if (!result.Succeeded) throw DynamicExceptions.OperationalException("Error updating role");
+        if (!result.Succeeded) throw new DineFineOperationalException("Error updating role");
         
         await _context.SaveChangesAsync();
     }
@@ -62,11 +62,11 @@ public class RoleService
     {
         var role = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Id == id);
         
-        if (role == null) throw DynamicExceptions.NotFoundException("Role not found");
+        if (role == null) throw new DineFineNotFoundException();
         
         var result = await _roleManager.DeleteAsync(role);
         
-        if (!result.Succeeded) throw DynamicExceptions.OperationalException("Error deleting role");
+        if (!result.Succeeded) throw new DineFineOperationalException("Error deleting role");
         
         await _context.SaveChangesAsync();
     }
