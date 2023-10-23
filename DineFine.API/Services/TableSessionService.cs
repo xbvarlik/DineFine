@@ -7,10 +7,22 @@ using DineFine.DataObjects.Models;
 namespace DineFine.API.Services;
 
 public class TableSessionService : BaseCosmosService<TableSession, TableSessionViewModel, TableSessionCreateModel, 
-    TableSessionUpdateModel, BaseCosmosQueryFilterModel>
+    TableSessionUpdateModel, TableSessionQueryFilterModel>
 {
     public TableSessionService(CosmosContext context) : base(context)
     {
+    }
+    
+    public IList<TableSessionViewModel> GetTableSessionsByDate(DateTime startDate, DateTime? endDate = null)
+    {
+        var sessions = GetEntityDbSetWithPartitionKey("RestaurantId");
+
+        if (endDate == null)
+            return sessions.Where(x => x.StartedAt.Date == startDate.Date)
+                .AsEnumerable().ToTableSessionViewModelList().ToList();
+
+        return sessions.Where(x => x.StartedAt.Date >= startDate.Date && x.StartedAt.Date <= endDate.Value.Date)
+            .AsEnumerable().ToTableSessionViewModelList().ToList();
     }
 
     protected override Task<IEnumerable<TableSessionViewModel>> OnAfterGetAllAsync(IEnumerable<TableSession> entities, CancellationToken cancellationToken = default)

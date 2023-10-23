@@ -7,7 +7,7 @@ namespace DineFine.API.Controllers;
 
 [SpecificAccess("Waiter")]
 public class TableSessionController : BaseCosmosController<TableSession, TableSessionViewModel, TableSessionCreateModel, 
-    TableSessionUpdateModel, BaseCosmosQueryFilterModel>
+    TableSessionUpdateModel, TableSessionQueryFilterModel>
 {
     public TableSessionController(TableSessionService service) : base(service)
     {

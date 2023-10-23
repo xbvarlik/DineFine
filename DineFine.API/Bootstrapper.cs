@@ -72,6 +72,7 @@ public static class Bootstrapper
         services.AddScoped<TableOfRestaurantService>();
         services.AddScoped<TableSessionService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<ReportService>();
     }
     
     private static void AddApplicationSwagger(this IServiceCollection services)

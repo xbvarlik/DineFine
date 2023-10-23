@@ -22,6 +22,5 @@ app.MapControllers();
 
 app.Run();
 
-
-// TODO: seed data don't see passwords
-// TODO: change sql to local db
+// TODO: Reporting will be implemented.
+// TODO: BLOB storage will be implemented.

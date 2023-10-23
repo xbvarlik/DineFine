@@ -133,6 +133,9 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
         var properties = typeof(TQueryFilterModel).GetProperties().ToList();
         foreach (var property in properties)
         {
+            if(property.PropertyType == typeof(DateTime))
+                continue;
+            
             var value = property.GetValue(query);
                 
             if (value != null)

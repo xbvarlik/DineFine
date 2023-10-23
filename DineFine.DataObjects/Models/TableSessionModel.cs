@@ -34,3 +34,9 @@ public class TableSessionViewModel : BaseViewModel
     public double TotalPrice { get; set; }
     public virtual CustomerReviewViewModel? CustomerReview { get; set; }
 }
+
+public class TableSessionQueryFilterModel : BaseCosmosQueryFilterModel
+{
+    public DateTime StartedAt { get; set; }
+    public DateTime EndedAt { get; set; }
+}
