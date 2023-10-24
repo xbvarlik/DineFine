@@ -2,9 +2,9 @@
 
 public interface ISessionAccessor
 {
-    int AccessUserId();
+    string AccessUserId();
     int AccessTenantId();
-    Task<int> AccessUserIdAsync();
+    Task<string> AccessUserIdAsync();
     Task<T?> GetOrAddAsync<T>(Func<string, Task<T?>> func) where T : class?;
     string? GetAccessToken();
 }

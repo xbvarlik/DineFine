@@ -19,3 +19,8 @@ public class RestaurantViewModel : BaseViewModel
     public virtual IEnumerable<TableOfRestaurantViewModel>? Tables { get; set; }
     public virtual IEnumerable<RestaurantCategoryViewModel>? Categories { get; set; }
 }
+
+public class RestaurantCosmosViewModel : BaseViewModel
+{
+    public string Name { get; set; } = null!;
+}

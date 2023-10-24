@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
 using DineFine.Accessor.SessionAccessors;
 using DineFine.DataObjects.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 
 namespace DineFine.Accessor.DataAccessors.Mssql;

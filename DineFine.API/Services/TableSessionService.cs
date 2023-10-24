@@ -13,9 +13,9 @@ public class TableSessionService : BaseCosmosService<TableSession, TableSessionV
     {
     }
     
-    public IList<TableSessionViewModel> GetTableSessionsByDate(DateTime startDate, DateTime? endDate = null)
+    public IList<TableSessionViewModel> GetTableSessionsByDate(string partitionKey, DateTime startDate, DateTime? endDate = null)
     {
-        var sessions = GetEntityDbSetWithPartitionKey("RestaurantId");
+        var sessions = GetEntityDbSetWithPartitionKey(partitionKey);
 
         if (endDate == null)
             return sessions.Where(x => x.StartedAt.Date == startDate.Date)

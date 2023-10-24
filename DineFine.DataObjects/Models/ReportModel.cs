@@ -9,6 +9,8 @@ public class ReportCreateModel
     public DateTime StartDate { get; set; }
     [Required]
     public string ReportType { get; set; } = null!;
+    [Required] 
+    public string PartitionKey { get; set; } = null!;
 }
 
 public class ReportViewModel

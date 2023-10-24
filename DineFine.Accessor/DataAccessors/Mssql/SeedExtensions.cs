@@ -152,6 +152,7 @@ namespace DineFine.Accessor.DataAccessors.Mssql
             SeedRestaurants(builder);
             SeedTablesOfRestaurant(builder);
             SeedUsers(builder);
+            SeedUserRoles(builder);
         }
 
         private static void SeedUsers(ModelBuilder builder)
@@ -427,6 +428,68 @@ namespace DineFine.Accessor.DataAccessors.Mssql
             );
             
             builder.Entity<User>().HasData(userList);
+        }
+
+        private static void SeedUserRoles(ModelBuilder builder)
+        {
+            builder.Entity<UserRole>().HasData(new List<UserRole>
+                {
+                    new UserRole
+                    {
+                        UserId = 1,
+                        RoleId = 1
+                    },
+                    new UserRole
+                    {
+                        UserId = 2,
+                        RoleId = 2
+                    },
+                    new UserRole
+                    {
+                        UserId = 3,
+                        RoleId = 2
+                    },
+                    new UserRole
+                    {
+                        UserId = 4,
+                        RoleId = 2
+                    },
+                    new UserRole
+                    {
+                        UserId = 5,
+                        RoleId = 3
+                    },
+                    new UserRole
+                    {
+                        UserId = 6,
+                        RoleId = 3
+                    },
+                    new UserRole
+                    {
+                        UserId = 7,
+                        RoleId = 3
+                    },
+                    new UserRole
+                    {
+                        UserId = 8,
+                        RoleId = 4
+                    },
+                    new UserRole
+                    {
+                        UserId = 9,
+                        RoleId = 4
+                    },
+                    new UserRole
+                    {
+                        UserId = 10,
+                        RoleId = 4
+                    },
+                    new UserRole 
+                    {
+                        UserId = 11,
+                        RoleId = 5
+                    }
+                });
         }
 
         private static void SeedTablesOfRestaurant(ModelBuilder builder)

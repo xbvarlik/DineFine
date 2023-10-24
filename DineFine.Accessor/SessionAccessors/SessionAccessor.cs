@@ -1,9 +1,7 @@
 ﻿using DineFine.Cache;
 using DineFine.DataObjects.Documents;
-using DineFine.DataObjects.Entities;
 using DineFine.DataObjects.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 
 namespace DineFine.Accessor.SessionAccessors;
 
@@ -18,44 +16,49 @@ public class SessionAccessor : ISessionAccessor
         _accessToken = httpContextAccessor.HttpContext?.Request.Headers["Authorization"];
     }
 
-    public int AccessUserId()
+    public string AccessUserId()
     {
         UserSession<TokenModel>? userSessionInfo = null;
         
         if (_accessToken != null)
             userSessionInfo = _cacheManager.GetAsync<UserSession<TokenModel>>(_accessToken).Result;
         
-        return userSessionInfo?.UserId ?? 0;
+        return userSessionInfo?.UserId ?? "0";
     }
 
     public int AccessTenantId()
     {
         UserSession<TokenModel>? userSessionInfo = null;
-        TableSession? tableSessionInfo = null;
-        
+
         if (_accessToken != null)
             userSessionInfo = _cacheManager.GetAsync<UserSession<TokenModel>>(_accessToken).Result;
 
         if(userSessionInfo != null && userSessionInfo.TenantId != 0)
             return userSessionInfo.TenantId;
         
-        tableSessionInfo = _cacheManager.GetAsync<TableSession>(userSessionInfo!.UserId.ToString()).Result;
-        return tableSessionInfo?.RestaurantId ?? 0;
+        var tableSessionInfo = _cacheManager.GetAsync<TableSession>(userSessionInfo!.UserId).Result;
+        return int.Parse(tableSessionInfo?.RestaurantId ?? "0");
     }
 
-    public async Task<int> AccessUserIdAsync()
+    public async Task<string> AccessUserIdAsync()
     {
         UserSession<TokenModel>? userSessionInfo = null;
         
         if(_accessToken != null)
             userSessionInfo = await _cacheManager.GetAsync<UserSession<TokenModel>>(_accessToken);
         
-        return userSessionInfo?.UserId ?? 0;
+        return userSessionInfo?.UserId ?? "0";
     }
 
     public async Task<T?> GetOrAddAsync<T>(Func<string, Task<T?>> func) where T : class?
-        => await _cacheManager.GetOrAddAsync(_accessToken!, func);
+        => await _cacheManager.GetOrAddAsync(GetAccessToken()!, func);
     
-    public string? GetAccessToken() => _accessToken;
+    public string? GetAccessToken() 
+    {
+        if(_accessToken != null && _accessToken.Contains("Bearer "))
+            return _accessToken.Replace("Bearer ", "");
+        
+        return _accessToken;
+    }
 }
 

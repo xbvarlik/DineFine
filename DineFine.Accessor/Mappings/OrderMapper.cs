@@ -9,20 +9,16 @@ public static class OrderMapper
     {
         return new Order
         {
+            OrderId = Guid.NewGuid().ToString(),
             RestaurantId = model.RestaurantId,
-            CustomerReview = model.CustomerReview?.ToViewModel() ?? null,
-            Restaurant = model.Restaurant.ToEntity().ToViewModel(false),
-            MenuItem = model.MenuItem.ToEntity().ToViewModel(false),
-            TableOfRestaurant = model.TableOfRestaurant.ToEntity().ToViewModel(),
+            MenuItem = model.MenuItem.ToEntity().ToCosmosViewModel(),
             OrderStatus = model.OrderStatus
         };
     } 
     
     public static void ToUpdatedEntity(this Order entity, OrderUpdateModel model)
     {
-        entity.CustomerReview.ToUpdatedViewModel(model.CustomerReview);
-        entity.MenuItem = model.MenuItem?.ToEntity().ToViewModel(false) ?? entity.MenuItem;
-        entity.TableOfRestaurant = model.TableOfRestaurant?.ToEntity().ToViewModel() ?? entity.TableOfRestaurant;
+        entity.MenuItem = model.MenuItem?.ToEntity().ToCosmosViewModel() ?? entity.MenuItem;
         entity.OrderStatus = model.OrderStatus ?? entity.OrderStatus;
     }
     
@@ -31,13 +27,8 @@ public static class OrderMapper
         return new OrderViewModel
         {
             OrderId = entity.OrderId,
-            CustomerReview = entity.CustomerReview,
-            RestaurantId = entity.Restaurant.Id,
-            Restaurant = entity.Restaurant,
             MenuItemId = entity.MenuItem.Id,
             MenuItem = entity.MenuItem,
-            TableOfRestaurantId = entity.TableOfRestaurant.Id,
-            TableOfRestaurant = entity.TableOfRestaurant,
             OrderStatusId = entity.OrderStatus.Id,
             OrderStatus = entity.OrderStatus
         };

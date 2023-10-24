@@ -6,8 +6,9 @@ public class UserSession<TTokenModel>
 {
     [Key]
     public string UserSessionId { get; set; } = null!;
-    [Required]
-    public int UserId { get; set; }
+
+    [Required] 
+    public string UserId { get; set; } = null!;
     [Required]
     public int TenantId { get; set; }
     [Required]

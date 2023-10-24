@@ -9,8 +9,9 @@ public static class TableSessionMapper
     {
         return new TableSession
         {
+            TableSessionId = Guid.NewGuid().ToString(),
             RestaurantId = model.RestaurantId,
-            Restaurant = model.Restaurant.ToEntity().ToViewModel(false),
+            Restaurant = model.Restaurant.ToEntity().ToCosmosViewModel(),
             Orders = model.Orders.Select(x => x.ToEntity().ToViewModel()),
             TableOfRestaurant = model.TableOfRestaurant.ToEntity().ToViewModel(),
             StartedAt = model.StartedAt,

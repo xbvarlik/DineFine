@@ -8,9 +8,9 @@ public class TableSession
 {
     [Key]
     public string TableSessionId { get; set; } = null!;
-    [Required]
-    public int RestaurantId { get; set; }
-    public RestaurantViewModel Restaurant { get; set; } = null!;
+    [Required] 
+    public string RestaurantId { get; set; } = null!;
+    public RestaurantCosmosViewModel Restaurant { get; set; } = null!;
     public TableOfRestaurantViewModel TableOfRestaurant { get; set; } = null!;
     [Required]
     public IEnumerable<OrderViewModel> Orders { get; set; } = null!;

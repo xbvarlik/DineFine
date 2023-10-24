@@ -9,13 +9,13 @@ namespace DineFine.Accessor.DataAccessors;
 
 public static class ContextEventHandlers
 {
-    public static void OnBeforeSaveChanges(int userId, IEnumerable<EntityEntry> entityEntries)
+    public static void OnBeforeSaveChanges(string userId, IEnumerable<EntityEntry> entityEntries)
     {
         entityEntries.ToList().ForEach(entityEntry =>
         {
-            OnBeforeCreateEntities(entityEntry, userId);
-            OnBeforeModifyEntities(entityEntry, userId);
-            OnBeforeDeleteEntities(entityEntry, userId);
+            OnBeforeCreateEntities(entityEntry, int.Parse(userId));
+            OnBeforeModifyEntities(entityEntry, int.Parse(userId));
+            OnBeforeDeleteEntities(entityEntry, int.Parse(userId));
         });
     }
 
@@ -37,17 +37,26 @@ public static class ContextEventHandlers
     
     private static void OnBeforeDeleteEntities(EntityEntry entityEntry, int userId)
     {
-        if (entityEntry is not { Entity: BaseEntity b, State: EntityState.Deleted }) return;
-        entityEntry.State = EntityState.Modified;
-        b.DeletedAt = DateTime.Now;
-        b.DeletedBy = userId;
-        b.IsDeleted = true;
+        if (entityEntry is not { State: EntityState.Deleted }) return;
+
+        if (entityEntry.Entity.GetType().GetProperty("IsDeleted") != null)
+        {
+            entityEntry.State = EntityState.Modified;
+            entityEntry.Property("IsDeleted").CurrentValue = true;
+        }
+        
+        if (entityEntry.Entity.GetType().GetProperty("DeletedBy") != null)
+            entityEntry.Property("DeletedBy").CurrentValue = userId;
+            
+        if (entityEntry.Entity.GetType().GetProperty("DeletedAt") != null)
+            entityEntry.Property("DeletedAt").CurrentValue = DateTime.UtcNow;
     }
 
     public static void OnBeforeReadEntities(ModelBuilder builder)
     {
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
+            if(IsIdentityEntity(entityType)) continue;
             SoftDeleteFilter(builder, entityType);
         }
     }
@@ -55,7 +64,7 @@ public static class ContextEventHandlers
     private static void SoftDeleteFilter(ModelBuilder builder, IMutableEntityType entityType)
     {
         var isDeletedProperty = entityType.FindProperty("IsDeleted");
-
+        
         if (isDeletedProperty == null || isDeletedProperty.ClrType != typeof(bool)) return;
             
         var parameter = Expression.Parameter(entityType.ClrType);
@@ -64,5 +73,11 @@ public static class ContextEventHandlers
         var filter = Expression.Lambda(Expression.Not(isDeletedProp), parameter);
             
         builder.Entity(entityType.ClrType).HasQueryFilter(filter);
+    }
+
+    private static bool IsIdentityEntity(IReadOnlyTypeBase entityType)
+    {
+        var identityEntityNames = new List<string>{"User", "Role", "UserRole", "UserClaim", "UserLogin", "UserToken"};
+        return identityEntityNames.Contains(entityType.Name);
     }
 }

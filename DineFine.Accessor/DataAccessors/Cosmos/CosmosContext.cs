@@ -8,9 +8,9 @@ namespace DineFine.Accessor.DataAccessors.Cosmos;
 
 public class CosmosContext : DbContext
 {
-    public DbSet<Order> Orders { get; set; } = null!;
-    public DbSet<TableSession> TableSessions { get; set; } = null!;
-    public DbSet<UserSession<TokenModel>> UserSessions { get; set; } = null!;
+    public virtual DbSet<Order> Orders { get; set; } = null!;
+    public virtual DbSet<TableSession> TableSessions { get; set; } = null!;
+    public virtual DbSet<UserSession<TokenModel>> UserSessions { get; set; } = null!;
 
     private readonly ISessionAccessor? _sessionAccessor;
     

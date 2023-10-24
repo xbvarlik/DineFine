@@ -37,6 +37,15 @@ public static class RestaurantMapper
         };
     }
     
+    public static RestaurantCosmosViewModel ToCosmosViewModel(this Restaurant entity)
+    {
+        return new RestaurantCosmosViewModel
+        {
+            Id = entity.Id,
+            Name = entity.Name
+        };
+    }
+    
     public static IEnumerable<RestaurantViewModel> ToRestaurantViewModelList(this IEnumerable<Restaurant> entities)
     {
         return entities.Select(x => x.ToViewModel());

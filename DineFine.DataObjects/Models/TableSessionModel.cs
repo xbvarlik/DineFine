@@ -4,7 +4,7 @@ namespace DineFine.DataObjects.Models;
 
 public class TableSessionCreateModel : BaseCreateModel
 {
-    public int RestaurantId { get; set; }
+    public string RestaurantId { get; set; } = null!;
     public RestaurantCreateModel Restaurant { get; set; } = null!;
     public ICollection<OrderCreateModel> Orders { get; set; } = null!;
     public TableOfRestaurantCreateModel TableOfRestaurant { get; set; } = null!;
@@ -26,7 +26,7 @@ public class TableSessionUpdateModel : BaseUpdateModel
 
 public class TableSessionViewModel : BaseViewModel
 {
-    public RestaurantViewModel Restaurant { get; set; } = null!;
+    public RestaurantCosmosViewModel Restaurant { get; set; } = null!;
     public IEnumerable<OrderViewModel> Orders { get; set; } = null!;
     public TableOfRestaurantViewModel TableOfRestaurant { get; set; } = null!;
     public DateTime StartedAt { get; set; }

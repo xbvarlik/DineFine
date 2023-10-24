@@ -18,8 +18,6 @@ public class CustomerReviewUpdateModel : BaseUpdateModel
 
 public class CustomerReviewViewModel : BaseViewModel
 {
-    public int RestaurantId { get; set; }
-    public virtual RestaurantViewModel? Restaurant { get; set; }
     public int CustomerId { get; set; }
     public virtual UserViewModel? Customer { get; set; }
     public int Rating { get; set; }

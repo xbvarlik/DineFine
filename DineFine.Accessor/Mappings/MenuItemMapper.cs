@@ -41,8 +41,19 @@ public static class MenuItemMapper
             Name = entity.Name,
             Price = entity.Price,
             RestaurantId = entity.RestaurantId,
-            Category = entity.RestaurantCategory?.ToViewModel(),
+            RestaurantCategory = entity.RestaurantCategory?.ToViewModel(),
             Ingredients = entity.MenuItemIngredients?.ToMenuItemIngredientViewModelList()
+        };
+    }
+
+    public static MenuItemCosmosViewModel ToCosmosViewModel(this MenuItem entity)
+    {
+        return new MenuItemCosmosViewModel
+        {
+            Name = entity.Name,
+            Price = entity.Price,
+            CategoryName = entity.RestaurantCategory?.ToViewModel().Category?.Name ?? string.Empty,
+            Ingredients = entity.MenuItemIngredients?.Select(x => x.Ingredient?.ToViewModel())
         };
     }
     

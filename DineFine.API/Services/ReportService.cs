@@ -23,7 +23,7 @@ public class ReportService
             _ => throw new InvalidEnumArgumentException()
         };
         
-        var tableSessions = _tableSessionService.GetTableSessionsByDate(createModel.StartDate, endDate);
+        var tableSessions = _tableSessionService.GetTableSessionsByDate(createModel.PartitionKey, createModel.StartDate, endDate);
         return CreateReport(tableSessions, createModel.ReportType);
     }
     

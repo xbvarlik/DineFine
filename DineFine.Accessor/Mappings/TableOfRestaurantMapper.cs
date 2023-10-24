@@ -29,6 +29,7 @@ public static class TableOfRestaurantMapper
             Id = entity.Id,
             RestaurantId = entity.RestaurantId,
             TableStatus = entity.TableStatus?.ToViewModel(),
+            NumberOfSeats = entity.NumberOfSeats
         };
     }
     

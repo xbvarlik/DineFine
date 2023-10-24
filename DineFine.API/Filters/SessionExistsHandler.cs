@@ -32,7 +32,7 @@ public class SessionExistsHandler : AuthorizationHandler<SessionExistsRequiremen
             return;
         }
 
-        var session = await _sessionAccessor.GetOrAddAsync(_sessionService.GetUserSessionByTokenAsync);
+        var session = await _sessionAccessor.GetOrAddAsync(_ => _sessionService.GetUserSessionByTokenAsync(token));
         if (session != default)
             context.Succeed(requirement);
         else

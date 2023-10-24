@@ -22,15 +22,18 @@ public class UserSessionService
         _context = context;
     }
 
-    private async Task<UserSession<TokenModel>?> GetUserSessionAsync(int userId)
+    private async Task<UserSession<TokenModel>?> GetUserSessionAsync(string userId)
     {
-        return await _context.UserSessions.FirstOrDefaultAsync(session => session.UserId == userId);
+        return await _context.UserSessions.WithPartitionKey(userId).FirstOrDefaultAsync();
     }
 
     public async Task<UserSession<TokenModel>?> GetUserSessionByTokenAsync(string accessToken)
     {
         var response = await _context.UserSessions.FirstOrDefaultAsync(session => 
-            session.LoginInfo.AccessToken == accessToken);
+            session.LoginInfo!.AccessToken == accessToken);
+        
+        if(response == null) throw new DineFineNotFoundException();
+        
         return response;
     }
     
@@ -65,7 +68,8 @@ public class UserSessionService
     {
         return new UserSession<TokenModel>
         {
-            UserId = user.Id,
+            UserSessionId = Guid.NewGuid().ToString(),
+            UserId = user.Id.ToString(),
             Agent = _httpContextAccessor.HttpContext!.Request.Headers["User-Agent"].ToString(),
             Email = user.Email!,
             UserRoles = userRoles,

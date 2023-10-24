@@ -8,15 +8,10 @@ public class Order
     [Key]
     [Required]
     public string OrderId { get; set; } = null!;
+
+    [Required] public string RestaurantId { get; set; } = null!;
     [Required]
-    public int RestaurantId { get; set; }
-    public CustomerReviewViewModel? CustomerReview { get; set; }
-    [Required]
-    public RestaurantViewModel Restaurant { get; set; } = null!;
-    [Required]
-    public MenuItemViewModel MenuItem { get; set; } = null!;
-    [Required]
-    public TableOfRestaurantViewModel TableOfRestaurant { get; set; } = null!;
+    public MenuItemCosmosViewModel MenuItem { get; set; } = null!;
     [Required]
     public OrderStatusViewModel OrderStatus { get; set; } = null!;
 }
