@@ -22,6 +22,10 @@ app.MapControllers();
 
 app.Run();
 
+// TODO: Restrict read as tenant-based.
+// TODO: Create notification for stock info. (Alert if stock is low)
+
 // TODO: BLOB storage will be implemented.
+// TODO: Notification Hub will be implemented.
 
 
