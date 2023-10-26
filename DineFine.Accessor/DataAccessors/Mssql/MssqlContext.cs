@@ -41,22 +41,25 @@ public class MssqlContext : IdentityDbContext<User, Role, int>
 
     public override int SaveChanges()
     {
-        var userId = _sessionAccessor.AccessUserId();
-        ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries());
+        var userId = _sessionAccessor!.AccessUserId();
+        var tenantId = _sessionAccessor.AccessTenantId();
+        ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries(), tenantId);
         return base.SaveChanges();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
-        var userId = _sessionAccessor.AccessUserId();
-        ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries());
+        var userId = _sessionAccessor!.AccessUserId();
+        var tenantId = _sessionAccessor.AccessTenantId();
+        ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries(), tenantId);
         return base.SaveChangesAsync(cancellationToken);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.SeedInitialData();
-        ContextEventHandlers.OnBeforeReadEntities(builder);
+        var tenantId = _sessionAccessor!.AccessTenantId();
+        ContextEventHandlers.OnBeforeReadEntities(builder, tenantId);
         base.OnModelCreating(builder);
     }
     

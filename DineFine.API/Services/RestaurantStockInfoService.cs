@@ -9,8 +9,10 @@ namespace DineFine.API.Services;
 public class RestaurantStockInfoService : BaseService<int, RestaurantStockInfo, RestaurantStockInfoViewModel, 
     RestaurantStockInfoCreateModel, RestaurantStockInfoUpdateModel, RestaurantStockInfoQueryFilterModel, MssqlContext>
 {
-    public RestaurantStockInfoService(MssqlContext context) : base(context)
+    private readonly INotificationService _notificationService;
+    public RestaurantStockInfoService(MssqlContext context, INotificationService notificationService) : base(context)
     {
+        _notificationService = notificationService;
     }
 
     protected override IQueryable<RestaurantStockInfo> GetEntityDbSetAsQueryable()
@@ -41,11 +43,14 @@ public class RestaurantStockInfoService : BaseService<int, RestaurantStockInfo, 
         return Task.FromResult(entity.ToViewModel());
     }
 
-    protected override Task<RestaurantStockInfo> OnBeforeUpdateAsync(RestaurantStockInfo entity, RestaurantStockInfoUpdateModel updateModel,
+    protected override async Task<RestaurantStockInfo> OnBeforeUpdateAsync(RestaurantStockInfo entity, RestaurantStockInfoUpdateModel updateModel,
         CancellationToken cancellationToken = default)
     {
+        if (entity.Stock <= entity.Threshold)
+            await _notificationService.OnStockLowAsync(entity.Ingredient!.Name);
+        
         entity.ToUpdatedEntity(updateModel);
-        return Task.FromResult(entity);
+        return entity;
     }
 
     protected override Task<RestaurantStockInfoViewModel> OnAfterUpdateAsync(RestaurantStockInfo entity, CancellationToken cancellationToken = default)

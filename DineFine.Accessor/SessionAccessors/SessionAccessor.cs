@@ -26,7 +26,7 @@ public class SessionAccessor : ISessionAccessor
         return userSessionInfo?.UserId ?? "0";
     }
 
-    public int AccessTenantId()
+    public int? AccessTenantId()
     {
         UserSession<TokenModel>? userSessionInfo = null;
 
@@ -37,7 +37,11 @@ public class SessionAccessor : ISessionAccessor
             return userSessionInfo.TenantId;
         
         var tableSessionInfo = _cacheManager.GetAsync<TableSession>(userSessionInfo!.UserId).Result;
-        return int.Parse(tableSessionInfo?.RestaurantId ?? "0");
+        
+        if(tableSessionInfo?.RestaurantId != null)
+            return int.Parse(tableSessionInfo?.RestaurantId);
+
+        return null;
     }
 
     public async Task<string> AccessUserIdAsync()

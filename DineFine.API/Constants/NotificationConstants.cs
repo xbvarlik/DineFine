@@ -4,6 +4,7 @@ public abstract class NotificationConstants
 {
     public const string WaiterEmail = "waiter.dinefine@gmail.com";
     public const string KitchenEmail = "kitchen.dinefine@gmail.com";
+    public const string SystemEmail = "base.dinefine@gmail.com";
 }
 
 public abstract class OrderStatusCodes

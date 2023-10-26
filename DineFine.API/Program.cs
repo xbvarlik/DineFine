@@ -22,10 +22,17 @@ app.MapControllers();
 
 app.Run();
 
-// TODO: Restrict read as tenant-based.
-// TODO: Create notification for stock info. (Alert if stock is low)
+// TODO: Restrict read as tenant-based. - Done
+// TODO: Create notification for stock info. (Alert if stock is low) - Done
+// TODO: Test restricted CRUD operations for tenant-based entities.
+// TODO: Migrate the database for RestaurantStockInfo entity is changed.
+// TODO: Redis Cache will be implemented. - Done
+// TODO: Test Redis Cache.
+// TODO: BLOB storage will be implemented. - Done
 
-// TODO: BLOB storage will be implemented.
+// TODO: BLOB storage will be made up and running.
+// TODO: Test BLOB storage.
+
 // TODO: Notification Hub will be implemented.
-
+// TODO: Notification Hub will be made up and running.
 
