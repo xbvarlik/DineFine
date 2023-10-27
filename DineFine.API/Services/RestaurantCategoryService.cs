@@ -1,4 +1,5 @@
-﻿using DineFine.Accessor.DataAccessors.Mssql;
+﻿using DineFine.Accessor.DataAccessors;
+using DineFine.Accessor.DataAccessors.Mssql;
 using DineFine.Accessor.Mappings;
 using DineFine.DataObjects.Entities;
 using DineFine.DataObjects.Models;
@@ -6,16 +7,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DineFine.API.Services;
 
-public class RestaurantCategoryService : BaseService<int, RestaurantCategory, RestaurantCategoryViewModel, 
+public class RestaurantCategoryService : BaseTenantService<int, RestaurantCategory, RestaurantCategoryViewModel, 
     RestaurantCategoryCreateModel, RestaurantCategoryUpdateModel, RestaurantCategoryQueryFilterModel, MssqlContext>
 {
     public RestaurantCategoryService(MssqlContext context) : base(context)
     {
     }
 
-    protected override IQueryable<RestaurantCategory> GetEntityDbSetAsQueryable()
+    protected override IQueryable<RestaurantCategory> GetEntityDbSetWithTenantId(int tenantId)
     {
         return Context.RestaurantCategories
+            .WithTenantId(tenantId)
             .Include(x => x.Category)
             .Include(x => x.MenuItems)!
             .ThenInclude(x => x.MenuItemIngredients)!

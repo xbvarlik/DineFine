@@ -15,13 +15,11 @@ public class IdentityController : ControllerBase
 {
     private readonly UserService _userService;
     private readonly RoleService _roleService;
-    private readonly UserRoleService _userRoleService;
 
-    public IdentityController(UserService userService, RoleService roleService, UserRoleService userRoleService)
+    public IdentityController(UserService userService, RoleService roleService)
     {
         _userService = userService;
         _roleService = roleService;
-        _userRoleService = userRoleService;
     }
     
     [HttpGet("users")]

@@ -10,7 +10,6 @@ public static class RestaurantStockInfoMapper
         return new RestaurantStockInfo
         {
             Stock = model.Stock,
-            RestaurantId = model.RestaurantId,
             UnitId = model.UnitId,
             IngredientId = model.IngredientId
         };
@@ -19,7 +18,6 @@ public static class RestaurantStockInfoMapper
     public static void ToUpdatedEntity(this RestaurantStockInfo entity, RestaurantStockInfoUpdateModel model)
     {
         entity.Stock = model.Stock ?? entity.Stock;
-        entity.RestaurantId = model.RestaurantId ?? entity.RestaurantId;
         entity.UnitId = model.UnitId ?? entity.UnitId;
         entity.IngredientId = model.IngredientId ?? entity.IngredientId;
     }

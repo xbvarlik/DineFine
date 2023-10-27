@@ -6,7 +6,7 @@ public class TableSessionCreateModel : BaseCreateModel
 {
     public string RestaurantId { get; set; } = null!;
     public RestaurantCreateModel Restaurant { get; set; } = null!;
-    public ICollection<OrderCreateModel> Orders { get; set; } = null!;
+    public IList<OrderCreateModel> Orders { get; set; } = null!;
     public TableOfRestaurantCreateModel TableOfRestaurant { get; set; } = null!;
     public DateTime StartedAt { get; set; }
     public DateTime EndedAt { get; set; }
@@ -16,7 +16,7 @@ public class TableSessionCreateModel : BaseCreateModel
 
 public class TableSessionUpdateModel : BaseUpdateModel
 {
-    public ICollection<OrderCreateModel>? Orders { get; set; }
+    public IList<OrderCreateModel>? Orders { get; set; }
     public TableOfRestaurantCreateModel? TableOfRestaurant { get; set; }
     public DateTime? StartedAt { get; set; }
     public DateTime? EndedAt { get; set; }
@@ -27,7 +27,7 @@ public class TableSessionUpdateModel : BaseUpdateModel
 public class TableSessionViewModel : BaseViewModel
 {
     public RestaurantCosmosViewModel Restaurant { get; set; } = null!;
-    public IEnumerable<OrderViewModel> Orders { get; set; } = null!;
+    public IList<OrderViewModel> Orders { get; set; } = null!;
     public TableOfRestaurantViewModel TableOfRestaurant { get; set; } = null!;
     public DateTime StartedAt { get; set; }
     public DateTime EndedAt { get; set; }

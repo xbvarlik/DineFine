@@ -37,19 +37,12 @@ public class CacheManager : ICacheManager
             .SetSlidingExpiration(TimeSpan.FromSeconds(_cacheExpireTimeInSeconds));
         
         _memoryCache.Set(key, value, cacheEntryOptions);
-
-        Console.WriteLine($"Cache key: {key} is set to value {value}");
-        
     }
 
     public async Task<T?> GetOrAddAsync<T>(string key, Func<string, Task<T?>> func, CancellationToken cancellationToken = default) where T : class?
     {
         if (_memoryCache.TryGetValue(key, out var value))
-        {
-            Console.WriteLine($"Cache key: {key} is found");
             return (T?)value;
-        }
-            
 
         var obj = await func(key);
         if (obj is null)

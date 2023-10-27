@@ -1,36 +1,35 @@
 ﻿using System.Linq.Expressions;
-using DineFine.Accessor.DataAccessors.Cosmos;
+using DineFine.Accessor.DataAccessors;
 using DineFine.DataObjects.Models;
 using DineFine.Exception;
 using Microsoft.EntityFrameworkCore;
 
 namespace DineFine.API.Services;
 
-public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpdateModel, TQueryFilterModel>
+public abstract class BaseTenantService<TId, TEntity, TViewModel, TCreateModel, TUpdateModel, TQueryFilterModel, TDbContext>
     where TEntity: class
     where TViewModel: BaseViewModel
     where TCreateModel: BaseCreateModel
     where TUpdateModel: BaseUpdateModel
-    where TQueryFilterModel: BaseCosmosQueryFilterModel?
-
+    where TQueryFilterModel: BaseQueryFilterModel?
+    where TDbContext: DbContext
 {
-    protected readonly CosmosContext Context;
+    protected readonly TDbContext Context;
 
-    protected BaseCosmosService(CosmosContext context)
+    protected BaseTenantService(TDbContext context)
     {
         Context = context;
     }
 
-    protected virtual IQueryable<TEntity> GetEntityDbSetWithPartitionKey(string? partitionKey)
-        => partitionKey == null ? GetEntityDbSet() : GetEntityDbSet().WithPartitionKey(partitionKey);
+    protected virtual IQueryable<TEntity> GetEntityDbSetWithTenantId(int tenantId) => Context.Set<TEntity>().WithTenantId(tenantId);
 
     protected virtual DbSet<TEntity> GetEntityDbSet() => Context.Set<TEntity>();
 
-    public virtual async Task<IEnumerable<TViewModel>> GetAllAsync(TQueryFilterModel? queryFilter = null, CancellationToken cancellationToken = default)
+    public virtual async Task<IEnumerable<TViewModel>> GetAllAsync(int tenantId, TQueryFilterModel? queryFilter = null, CancellationToken cancellationToken = default)
     {
         try
         {
-            var entities = GetEntityDbSetWithPartitionKey(queryFilter?.PartitionKey);
+            var entities= GetEntityDbSetWithTenantId(tenantId);
             var filteredEntities = await QuerySpecification(queryFilter, entities).ToListAsync(cancellationToken);
             
             return await OnAfterGetAllAsync(filteredEntities, cancellationToken);
@@ -41,11 +40,11 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
         }
     }
     
-    public virtual async Task<TViewModel> GetByIdAsync(string id, string? partitionKey, CancellationToken cancellationToken = default)
+    public virtual async Task<TViewModel> GetByIdAsync(TId id, int tenantId, CancellationToken cancellationToken = default)
     {
         try
         {
-            var entity = await GetEntityDbSetWithPartitionKey(partitionKey).FirstOrDefaultAsync(GenerateLambdaExpressionForId(id), cancellationToken);
+            var entity = await GetEntityDbSetWithTenantId(tenantId).FirstOrDefaultAsync(GenerateLambdaExpressionForId(id), cancellationToken);
             var result = OnAfterGet(entity, cancellationToken);
             
             if (result == null)
@@ -74,7 +73,7 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
         }
     }
     
-    public virtual async Task<TViewModel> UpdateAsync(string id, TUpdateModel updateModel, CancellationToken cancellationToken = default)
+    public virtual async Task<TViewModel> UpdateAsync(TId id, TUpdateModel updateModel, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -94,7 +93,7 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
         }
     }
     
-    public virtual async Task DeleteAsync(string id, CancellationToken cancellationToken = default)
+    public virtual async Task DeleteAsync(TId id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -133,9 +132,6 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
         var properties = typeof(TQueryFilterModel).GetProperties().ToList();
         foreach (var property in properties)
         {
-            if(property.PropertyType == typeof(DateTime))
-                continue;
-            
             var value = property.GetValue(query);
                 
             if (value != null)
@@ -175,7 +171,7 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
         }
     }
     
-    private static Expression<Func<TEntity, bool>> GenerateLambdaExpressionForId(string id)
+    private static Expression<Func<TEntity, bool>> GenerateLambdaExpressionForId(TId id)
     {
         var mappingEntityParameterExpression = Expression.Parameter(typeof(TEntity));
         var memberExpression = Expression.PropertyOrField(mappingEntityParameterExpression, "Id");
@@ -191,4 +187,5 @@ public abstract class BaseCosmosService<TEntity, TViewModel, TCreateModel, TUpda
 
         return Expression.Lambda<Func<TEntity, bool>>(combinedExpression, mappingEntityParameterExpression);
     }
+    
 }

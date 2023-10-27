@@ -2,6 +2,7 @@
 using DineFine.Accessor.Mappings;
 using DineFine.API.Constants;
 using DineFine.DataObjects.Documents;
+using DineFine.DataObjects.Entities;
 using DineFine.DataObjects.Models;
 
 namespace DineFine.API.Services;
@@ -25,9 +26,15 @@ public class TableSessionService : BaseCosmosService<TableSession, TableSessionV
             .AsEnumerable().ToTableSessionViewModelList().ToList();
     }
 
+    public async Task CreateTableSessionFromEntityAsync(TableSession entity, CancellationToken cancellationToken = default)
+    {
+        await GetEntityDbSet().AddAsync(entity, cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken);
+    }
+
     protected override Task<IEnumerable<TableSessionViewModel>> OnAfterGetAllAsync(IEnumerable<TableSession> entities, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(entities.ToTableSessionViewModelList());
+        return Task.FromResult(entities.ToTableSessionViewModelList().AsEnumerable());
     }
 
     protected override TableSessionViewModel? OnAfterGet(TableSession? entity, CancellationToken cancellationToken = default)

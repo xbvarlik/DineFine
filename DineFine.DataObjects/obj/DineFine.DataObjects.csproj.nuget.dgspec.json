@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\10131551\\RiderProjects\\DineFine\\DineFine.DataObjects\\DineFine.DataObjects.csproj": {}
+    "D:\\Codes\\Rider\\DineFine\\DineFine.DataObjects\\DineFine.DataObjects.csproj": {}
   },
   "projects": {
-    "C:\\Users\\10131551\\RiderProjects\\DineFine\\DineFine.DataObjects\\DineFine.DataObjects.csproj": {
+    "D:\\Codes\\Rider\\DineFine\\DineFine.DataObjects\\DineFine.DataObjects.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\10131551\\RiderProjects\\DineFine\\DineFine.DataObjects\\DineFine.DataObjects.csproj",
+        "projectUniqueName": "D:\\Codes\\Rider\\DineFine\\DineFine.DataObjects\\DineFine.DataObjects.csproj",
         "projectName": "DineFine.DataObjects",
-        "projectPath": "C:\\Users\\10131551\\RiderProjects\\DineFine\\DineFine.DataObjects\\DineFine.DataObjects.csproj",
-        "packagesPath": "C:\\Users\\10131551\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\10131551\\RiderProjects\\DineFine\\DineFine.DataObjects\\obj\\",
+        "projectPath": "D:\\Codes\\Rider\\DineFine\\DineFine.DataObjects\\DineFine.DataObjects.csproj",
+        "packagesPath": "C:\\Users\\lanes\\.nuget\\packages\\",
+        "outputPath": "D:\\Codes\\Rider\\DineFine\\DineFine.DataObjects\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\10131551\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\lanes\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -63,7 +63,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Users\\10131551\\.dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.305\\RuntimeIdentifierGraph.json"
         }
       }
     }

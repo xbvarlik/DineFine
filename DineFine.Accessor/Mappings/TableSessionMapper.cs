@@ -12,7 +12,7 @@ public static class TableSessionMapper
             TableSessionId = Guid.NewGuid().ToString(),
             RestaurantId = model.RestaurantId,
             Restaurant = model.Restaurant.ToEntity().ToCosmosViewModel(),
-            Orders = model.Orders.Select(x => x.ToEntity().ToViewModel()),
+            Orders = model.Orders.Select(x => x.ToEntity().ToViewModel()).ToList(),
             TableOfRestaurant = model.TableOfRestaurant.ToEntity().ToViewModel(),
             StartedAt = model.StartedAt,
             EndedAt = model.EndedAt,
@@ -23,7 +23,7 @@ public static class TableSessionMapper
 
     public static void ToUpdatedEntity(this TableSession entity, TableSessionUpdateModel model)
     {
-        entity.Orders = model.Orders?.Select(x => x.ToEntity().ToViewModel()) ?? entity.Orders;
+        entity.Orders = model.Orders?.Select(x => x.ToEntity().ToViewModel()).ToList() ?? entity.Orders;
         entity.TableOfRestaurant = model.TableOfRestaurant?.ToEntity().ToViewModel() ?? entity.TableOfRestaurant;
         entity.StartedAt = model.StartedAt ?? entity.StartedAt;
         entity.EndedAt = model.EndedAt ?? entity.EndedAt;
@@ -45,8 +45,8 @@ public static class TableSessionMapper
         };
     }
     
-    public static IEnumerable<TableSessionViewModel> ToTableSessionViewModelList(this IEnumerable<TableSession> entities)
+    public static IList<TableSessionViewModel> ToTableSessionViewModelList(this IEnumerable<TableSession> entities)
     {
-        return entities.Select(x => x.ToViewModel());
+        return entities.Select(x => x.ToViewModel()).ToList();
     }
 }

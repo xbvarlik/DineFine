@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace DineFine.Accessor.DataAccessors;
 
-public static class ContextEventHandlers
+public static class DbContextExtensions
 {
     
     
@@ -79,8 +79,8 @@ public static class ContextEventHandlers
         {
             if(IsIdentityEntity(entityType)) continue;
             SoftDeleteFilter(builder, entityType);
-            if(tenantId != null)
-                TenantIdFilter(builder, entityType, tenantId.Value);
+
+            TenantIdFilter(builder, entityType, tenantId);
         }
     }
     
@@ -113,10 +113,10 @@ public static class ContextEventHandlers
             throw new DineFineOperationalException("Tenant Id must match your restaurant Id.");
     }
 
-    private static void TenantIdFilter(ModelBuilder builder, IMutableEntityType entityType, int tenantId)
+    private static void TenantIdFilter(ModelBuilder builder, IMutableEntityType entityType, int? tenantId)
     {
         var tenantIdProperty = entityType.FindProperty("RestaurantId");
-        if (tenantIdProperty == null || tenantIdProperty.ClrType != typeof(int)) return;
+        if (tenantId == null || tenantIdProperty == null || tenantIdProperty.ClrType != typeof(int)) return;
         
         var tenantIdEntityNames = new List<string> { "RestaurantCategory", "RestaurantStockInfo" };
         if(!tenantIdEntityNames.Contains(entityType.Name)) return;
@@ -124,7 +124,7 @@ public static class ContextEventHandlers
         var parameterExpression = Expression.Parameter(entityType.ClrType);
         var tenantIdProp = Expression.PropertyOrField(parameterExpression, "RestaurantId");
 
-        var constantExpression = Expression.Constant(tenantId);
+        var constantExpression = Expression.Constant(tenantId.Value);
         var equalExpression = Expression.Equal(tenantIdProp, constantExpression);
         
         var filter = Expression.Lambda(equalExpression, parameterExpression);
@@ -136,5 +136,17 @@ public static class ContextEventHandlers
     {
         var identityEntityNames = new List<string>{"User", "Role", "UserRole", "UserClaim", "UserLogin", "UserToken"};
         return identityEntityNames.Contains(entityType.Name);
+    }
+    
+    public static IQueryable<TEntity> WithTenantId<TEntity>(this IQueryable<TEntity> query, int tenantId)
+        where TEntity : class
+    {
+        var parameter = Expression.Parameter(typeof(TEntity), "entity");
+        var property = Expression.Property(parameter, "RestaurantId");
+        var constant = Expression.Constant(tenantId);
+        var equals = Expression.Equal(property, constant);
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(equals, parameter);
+
+        return query.Where(lambda);
     }
 }

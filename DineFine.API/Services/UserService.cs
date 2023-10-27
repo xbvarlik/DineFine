@@ -8,12 +8,10 @@ namespace DineFine.API.Services;
 
 public class UserService
 {
-    private readonly MssqlContext _context;
     private readonly UserManager<User> _userManager;
 
-    public UserService(MssqlContext context, UserManager<User> userManager)
+    public UserService(UserManager<User> userManager)
     {
-        _context = context;
         _userManager = userManager;
     }
     

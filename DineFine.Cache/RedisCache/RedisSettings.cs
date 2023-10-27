@@ -6,7 +6,9 @@ public class RedisSettings
 {
     public string ConnectionString { get; set; } = null!;
     
-    public string RedisPrefix { get; set; } = null!;
+    public string UserSessionPrefix { get; set; } = null!;
+    
+    public string TableSessionPrefix { get; set; } = null!;
 }
 
 public class RedisDbAndSessionKeyModel

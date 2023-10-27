@@ -9,6 +9,7 @@ public class RedisCacheManager : IRedisCacheManager
 {
     private readonly ConnectionMultiplexer _redis;
     private readonly RedisSettings _redisSettings;
+    private string _prefix;
     private const int ExpireTime = 15;
 
     public RedisCacheManager(IOptions<RedisSettings> redisSettings)
@@ -17,20 +18,21 @@ public class RedisCacheManager : IRedisCacheManager
         _redisSettings = redisSettings.Value;
     }
     
-    private RedisDbAndSessionKeyModel GetRedisDbAndKey(string key)
+    private RedisDbAndSessionKeyModel GetRedisDbAndKey(string key, string prefix)
     {
+        _prefix = prefix;
         return new RedisDbAndSessionKeyModel
         {
             Database = _redis.GetDatabase(), 
-            Key = $"{_redisSettings.RedisPrefix}:{key}:session"
+            Key = $"{prefix}:{key}:session"
         };
     }
 
-    public TCacheObject CreateCacheObject<TCacheObject, TEntity>(TEntity entity, string key, Func<TEntity, string, TCacheObject> mapper) 
+    public TCacheObject CreateCacheObject<TCacheObject, TEntity>(TEntity entity, string prefix, string key, Func<TEntity, string, TCacheObject> mapper) 
         where TCacheObject : class
         where TEntity : class
     {
-        var getRedisDbAndKey = GetRedisDbAndKey(key);
+        var getRedisDbAndKey = GetRedisDbAndKey(key, prefix);
 
         var cacheObject = mapper(entity, getRedisDbAndKey.Key);
 
@@ -41,9 +43,9 @@ public class RedisCacheManager : IRedisCacheManager
         return cacheObject;
     }
 
-    public TCacheObject? GetCacheObject<TCacheObject>(string key) where TCacheObject : class
+    public TCacheObject? GetCacheObject<TCacheObject>(string prefix, string key) where TCacheObject : class
     {
-        var getRedisDbAndKey = GetRedisDbAndKey(key);
+        var getRedisDbAndKey = GetRedisDbAndKey(key, prefix);
 
         var jsonData = getRedisDbAndKey.Database.StringGet(getRedisDbAndKey.Key);
 
@@ -55,16 +57,16 @@ public class RedisCacheManager : IRedisCacheManager
         return session;
     }
 
-    public void RemoveCacheObject(string key)
+    public void RemoveCacheObject(string key, string prefix)
     {
-        var getRedisDbAndKey = GetRedisDbAndKey(key);
+        var getRedisDbAndKey = GetRedisDbAndKey(key, prefix);
         
         getRedisDbAndKey.Database.KeyDelete(getRedisDbAndKey.Key);
     }
 
-    public void RefreshCacheObject<TCacheObject>(string key)
+    public void RefreshCacheObject<TCacheObject>(string key, string prefix)
     {
-        var getRedisDbAndKey = GetRedisDbAndKey(key);
+        var getRedisDbAndKey = GetRedisDbAndKey(key, prefix);
         
         var jsonData = getRedisDbAndKey.Database.StringGet(getRedisDbAndKey.Key);
         
@@ -78,10 +80,10 @@ public class RedisCacheManager : IRedisCacheManager
         getRedisDbAndKey.Database.StringSet(getRedisDbAndKey.Key, jsonData, TimeSpan.FromMinutes(ExpireTime));
     }
 
-    public TCacheObject? UpdateAndRefreshCacheObject<TCacheObject, TUpdateModel>(string key, TUpdateModel updateModel, Func<TUpdateModel, TCacheObject, TCacheObject> mapper) 
+    public TCacheObject? UpdateAndRefreshCacheObject<TCacheObject, TUpdateModel>(string key, string prefix, TUpdateModel updateModel, Func<TUpdateModel, TCacheObject, TCacheObject> mapper) 
         where TCacheObject : class where TUpdateModel : class
     {
-        var getRedisDbAndKey = GetRedisDbAndKey(key);
+        var getRedisDbAndKey = GetRedisDbAndKey(key, prefix);
         
         var jsonData = getRedisDbAndKey.Database.StringGet(getRedisDbAndKey.Key);
         

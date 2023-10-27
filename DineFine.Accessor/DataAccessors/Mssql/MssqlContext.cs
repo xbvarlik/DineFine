@@ -43,7 +43,7 @@ public class MssqlContext : IdentityDbContext<User, Role, int>
     {
         var userId = _sessionAccessor!.AccessUserId();
         var tenantId = _sessionAccessor.AccessTenantId();
-        ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries(), tenantId);
+        DbContextExtensions.OnBeforeSaveChanges(userId, ChangeTracker.Entries(), tenantId);
         return base.SaveChanges();
     }
 
@@ -51,15 +51,15 @@ public class MssqlContext : IdentityDbContext<User, Role, int>
     {
         var userId = _sessionAccessor!.AccessUserId();
         var tenantId = _sessionAccessor.AccessTenantId();
-        ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries(), tenantId);
+        DbContextExtensions.OnBeforeSaveChanges(userId, ChangeTracker.Entries(), tenantId);
         return base.SaveChangesAsync(cancellationToken);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.SeedInitialData();
-        var tenantId = _sessionAccessor!.AccessTenantId();
-        ContextEventHandlers.OnBeforeReadEntities(builder, tenantId);
+        var tenantId = _sessionAccessor?.AccessTenantId();
+        DbContextExtensions.OnBeforeReadEntities(builder, tenantId);
         base.OnModelCreating(builder);
     }
     

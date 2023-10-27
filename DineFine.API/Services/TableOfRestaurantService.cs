@@ -2,6 +2,7 @@
 using DineFine.Accessor.Mappings;
 using DineFine.DataObjects.Entities;
 using DineFine.DataObjects.Models;
+using DineFine.Exception;
 using Microsoft.EntityFrameworkCore;
 
 namespace DineFine.API.Services;
@@ -11,6 +12,7 @@ public class TableOfRestaurantService : BaseService<int, TableOfRestaurant, Tabl
 {
     public TableOfRestaurantService(MssqlContext context) : base(context)
     {
+
     }
     
     protected override IQueryable<TableOfRestaurant> GetEntityDbSetAsQueryable()
@@ -47,8 +49,8 @@ public class TableOfRestaurantService : BaseService<int, TableOfRestaurant, Tabl
         return Task.FromResult(entity);
     }
 
-    protected override Task<TableOfRestaurantViewModel> OnAfterUpdateAsync(TableOfRestaurant entity, CancellationToken cancellationToken = default)
+    protected async override Task<TableOfRestaurantViewModel> OnAfterUpdateAsync(TableOfRestaurant entity, CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(entity.ToViewModel());
+        return entity.ToViewModel();
     }
 }

@@ -20,7 +20,7 @@ public static class Bootstrapper
     public static void AddBootstrapper(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddApplicationDatabases(configuration);
-        services.AddSessionAccessor();
+        services.AddAccessors();
         services.AddInMemoryCache(configuration);
         services.AddApplicationServices();
         services.AddIdentityService(configuration);
@@ -58,6 +58,7 @@ public static class Bootstrapper
         services.AddScoped<RoleService>();
         
         services.AddScoped<UserSessionService>();
+        services.AddScoped<TableSessionCacheService>();
         
         services.AddScoped<TokenService>();
         

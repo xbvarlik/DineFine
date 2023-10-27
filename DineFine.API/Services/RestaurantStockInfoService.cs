@@ -1,4 +1,5 @@
-﻿using DineFine.Accessor.DataAccessors.Mssql;
+﻿using DineFine.Accessor.DataAccessors;
+using DineFine.Accessor.DataAccessors.Mssql;
 using DineFine.Accessor.Mappings;
 using DineFine.DataObjects.Entities;
 using DineFine.DataObjects.Models;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DineFine.API.Services;
 
-public class RestaurantStockInfoService : BaseService<int, RestaurantStockInfo, RestaurantStockInfoViewModel, 
+public class RestaurantStockInfoService : BaseTenantService<int, RestaurantStockInfo, RestaurantStockInfoViewModel, 
     RestaurantStockInfoCreateModel, RestaurantStockInfoUpdateModel, RestaurantStockInfoQueryFilterModel, MssqlContext>
 {
     private readonly INotificationService _notificationService;
@@ -15,9 +16,10 @@ public class RestaurantStockInfoService : BaseService<int, RestaurantStockInfo, 
         _notificationService = notificationService;
     }
 
-    protected override IQueryable<RestaurantStockInfo> GetEntityDbSetAsQueryable()
+    protected override IQueryable<RestaurantStockInfo> GetEntityDbSetWithTenantId(int tenantId)
     {
         return Context.RestaurantStockInfos
+            .WithTenantId(tenantId)
             .Include(x => x.Unit)
             .Include(x => x.Ingredient)
             .AsQueryable();

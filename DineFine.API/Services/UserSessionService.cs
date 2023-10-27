@@ -1,4 +1,5 @@
 ﻿using DineFine.Accessor.DataAccessors.Cosmos;
+using DineFine.Accessor.Mappings;
 using DineFine.DataObjects.Documents;
 using DineFine.DataObjects.Entities;
 using DineFine.DataObjects.Models;
@@ -44,38 +45,29 @@ public class UserSessionService
         
         if(userRoles is null) throw new DineFineNotFoundException();
         
-        var login = await _tokenService.CreateAccessTokenAsync(user);
+        var sessionCreateModel = new UserSessionCreateModel
+        {
+            User = user,
+            UserRoles = userRoles,
+            TokenModel = await _tokenService.CreateAccessTokenAsync(user),
+            Agent = _httpContextAccessor.HttpContext!.Request.Headers["User-Agent"].ToString()
+        };
         
-        var session = CreteUserSessionEntity(user, userRoles, login);
+        var session = sessionCreateModel.ToUserSession();
 
         await UpsertUserUserSessionAsync(session);
-        return login;
+        return session.LoginInfo!;
     }
 
     private async Task UpsertUserUserSessionAsync(UserSession<TokenModel> session)
     {
         var currentSession = await GetUserSessionAsync(session.UserId);
-        
+
         if (currentSession is null)
             await _context.UserSessions.AddAsync(session);
         else
-            _context.Entry(currentSession).CurrentValues.SetValues(session);
+            _context.Entry(currentSession).CurrentValues.SetValues(session.ToUpdatedSession());
 
         await _context.SaveChangesAsync();
-    }
-
-    private UserSession<TokenModel> CreteUserSessionEntity(User user, IList<string> userRoles, TokenModel login)
-    {
-        return new UserSession<TokenModel>
-        {
-            UserSessionId = Guid.NewGuid().ToString(),
-            UserId = user.Id.ToString(),
-            Agent = _httpContextAccessor.HttpContext!.Request.Headers["User-Agent"].ToString(),
-            Email = user.Email!,
-            UserRoles = userRoles,
-            LoginInfo = login,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
     }
 }

@@ -12,7 +12,7 @@ public class EmailService
     {
         _configuration = configuration;
     }
-
+    
     public async Task SendEmailAsync(string fromEmail, string toEmailAddress, string subject, string body)
     {
         var host = _configuration["EmailSettings:Host"];

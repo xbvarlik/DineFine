@@ -13,13 +13,12 @@ public class TableSession
     public RestaurantCosmosViewModel Restaurant { get; set; } = null!;
     public TableOfRestaurantViewModel TableOfRestaurant { get; set; } = null!;
     [Required]
-    public IEnumerable<OrderViewModel> Orders { get; set; } = null!;
+    public IList<OrderViewModel> Orders { get; set; } = null!;
     [Required]
     public DateTime StartedAt { get; set; }
     [Required]
     public DateTime EndedAt { get; set; }
     [Required]
     public double TotalPrice { get; set; }
-    [Required]
     public CustomerReviewViewModel? CustomerReview { get; set; }
 }

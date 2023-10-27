@@ -35,7 +35,7 @@ public class CosmosContext : DbContext
     public int SaveChanges()
     {
         var userId = _sessionAccessor.AccessUserId();
-        ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries());
+        DbContextExtensions.OnBeforeSaveChanges(userId, ChangeTracker.Entries());
         return base.SaveChanges();
     }
     
@@ -43,7 +43,7 @@ public class CosmosContext : DbContext
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         var userId = _sessionAccessor.AccessUserId();
-        ContextEventHandlers.OnBeforeSaveChanges(userId, ChangeTracker.Entries());
+        DbContextExtensions.OnBeforeSaveChanges(userId, ChangeTracker.Entries());
         return base.SaveChangesAsync(cancellationToken);
     }
 }

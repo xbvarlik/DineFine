@@ -1,5 +1,6 @@
 ﻿using DineFine.Accessor.DataAccessors.Cosmos;
 using DineFine.Accessor.DataAccessors.Mssql;
+using DineFine.Accessor.HttpAccessors;
 using DineFine.Accessor.SessionAccessors;
 using DineFine.Exception;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +11,13 @@ namespace DineFine.Accessor;
 
 public static class Bootstrapper
 {
-    public static void AddSessionAccessor(this IServiceCollection services)
+    public static void AddAccessors(this IServiceCollection services)
     {
         services.AddScoped<ISessionAccessor, SessionAccessor>();
+        services.AddScoped<HttpAccessor>();
+        services.AddScoped<RedisAccessor>();
     }
+    
 
     public static void AddSqlContext(this IServiceCollection services, IConfiguration configuration)
     {
